@@ -33,42 +33,41 @@
         <!-- Tabs for Order Status -->
         <ul class="nav nav-pills mb-3" id="orderTab" role="tablist">
             <li class="nav-item" role="presentation">
-                <a class="nav-link {{#if (eq type 'pending')}}active{{/if}}" 
-                    id="pending-tab" data-bs-toggle="pill" href="#pending" role="tab"
-                    aria-controls="pending" aria-selected="true">Hàng đã đặt</a>
+                <a class="nav-link {{#if (eq type 'pending')}}active{{/if}}" id="pending-tab" data-bs-toggle="pill"
+                    href="#pending" role="tab" aria-controls="pending" aria-selected="true">Hàng đã đặt</a>
             </li>
             <li class="nav-item" role="presentation">
-                <a class="nav-link {{#if (eq type 'shipping')}}active{{/if}}" 
-                    id="shipped-tab" data-bs-toggle="pill" href="#shipped" role="tab"
-                    aria-controls="shipped" aria-selected="false">Hàng đang giao</a>
+                <a class="nav-link {{#if (eq type 'shipping')}}active{{/if}}" id="shipped-tab" data-bs-toggle="pill"
+                    href="#shipped" role="tab" aria-controls="shipped" aria-selected="false">Hàng đang giao</a>
             </li>
             <li class="nav-item" role="presentation">
-                <a class="nav-link {{#if (eq type 'delivered')}}active{{/if}}" 
-                    id="delivered-tab" data-bs-toggle="pill" href="#delivered" role="tab"
-                    aria-controls="delivered" aria-selected="false">Hàng đã nhận</a>
+                <a class="nav-link {{#if (eq type 'delivered')}}active{{/if}}" id="delivered-tab" data-bs-toggle="pill"
+                    href="#delivered" role="tab" aria-controls="delivered" aria-selected="false">Hàng đã nhận</a>
             </li>
         </ul>
         <div class="tab-content" id="orderTabContent">
             <!-- Hàng đã đặt -->
-            <div class="tab-pane fade {{#if (eq type 'pending')}}show active{{/if}}" 
-                id="pending" role="tabpanel" aria-labelledby="pending-tab">
+            <div class="tab-pane fade {{#if (eq type 'pending')}}show active{{/if}}" id="pending" role="tabpanel"
+                aria-labelledby="pending-tab">
                 <div class="order-card">
                     <h5>Order #1</h5>
                     <p><strong>Product:</strong> T-Shirt</p>
                     <p><strong>Price:</strong> $25.00</p>
                     <p class="order-status pending">Hàng đã đặt - Chờ xử lý</p>
+                    <button class="btn btn-danger btn-sm cancel-order" data-id="{{this.id}}">Hủy đơn hàng</button>
                 </div>
                 <div class="order-card">
                     <h5>Order #2</h5>
                     <p><strong>Product:</strong> Jeans</p>
                     <p><strong>Price:</strong> $40.00</p>
                     <p class="order-status pending">Hàng đã đặt - Chờ xử lý</p>
+                    <button class="btn btn-danger btn-sm cancel-order" data-id="{{this.id}}">Hủy đơn hàng</button>
                 </div>
             </div>
 
             <!-- Hàng đang giao -->
-            <div class="tab-pane fade {{#if (eq type 'shipping')}}show active{{/if}}" 
-                id="shipped" role="tabpanel" aria-labelledby="shipped-tab">
+            <div class="tab-pane fade {{#if (eq type 'shipping')}}show active{{/if}}" id="shipped" role="tabpanel"
+                aria-labelledby="shipped-tab">
                 <div class="order-card">
                     <h5>Order #3</h5>
                     <p><strong>Product:</strong> Sunglasses</p>
@@ -78,8 +77,8 @@
             </div>
 
             <!-- Hàng đã nhận -->
-            <div class="tab-pane fade {{#if (eq type 'delivered')}}show active{{/if}}" 
-                id="delivered" role="tabpanel" aria-labelledby="delivered-tab">
+            <div class="tab-pane fade {{#if (eq type 'delivered')}}show active{{/if}}" id="delivered" role="tabpanel"
+                aria-labelledby="delivered-tab">
                 <div class="order-card">
                     <h5>Order #4</h5>
                     <p><strong>Product:</strong> Sweater</p>
@@ -96,3 +95,33 @@
         </div>
     </div>
 </section>
+
+<script>
+    $(document).ready(function () {
+        // Lắng nghe sự kiện click trên các nút hủy đơn hàng
+        $('.cancel-order').on('click', function () {
+            const orderId = $(this).data('id');  // Lấy ID đơn hàng từ thuộc tính data-id
+
+            // Gửi yêu cầu hủy đơn hàng tới server
+            $.ajax({
+                url: `/order/cancel/${orderId}`,
+                type: 'DELETE',
+                contentType: 'application/json',
+                success: function (data) {
+                    if (data.success) {
+                        alert('Hủy đơn hàng thành công!');
+                        // Cập nhật giao diện (ẩn đơn hàng bị hủy)
+                        $(this).closest('.order-card').remove();
+                    } else {
+                        alert('Không thể hủy đơn hàng: ' + data.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                    alert('Đã xảy ra lỗi khi hủy đơn hàng.');
+                }
+            });
+        });
+    });
+
+</script>

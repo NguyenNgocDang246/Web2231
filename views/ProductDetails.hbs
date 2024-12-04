@@ -1,5 +1,27 @@
 {{> Nav user=user}}
 
+<style>
+    .comment {
+        border-bottom: 1px solid #ddd;
+        padding: 10px 0;
+        margin-bottom: 10px;
+    }
+
+    .comment-author {
+        font-weight: bold;
+        color: #007bff;
+    }
+
+    .comment-time {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .comment-text {
+        margin: 5px 0 0;
+    }
+</style>
+
 <!-- Product Details Section -->
 <section class="py-5">
     <div class="container">
@@ -33,6 +55,26 @@
                         <li class="list-group-item">Color: Black, White, Blue</li>
                     </ul>
                 </div>
+
+                <!-- Comments Section -->
+                <div class="mt-5">
+                    <h3>Comments</h3>
+
+                    <!-- Add Comment Form -->
+                    <form id="commentForm" class="mb-4">
+                        <div class="mb-3">
+                            <textarea id="commentInput" class="form-control" rows="3"
+                                placeholder="Write your comment..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit Comment</button>
+                    </form>
+
+                    <!-- Comments List -->
+                    <div id="commentsList">
+                        <!-- Comments will be dynamically inserted here -->
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -73,6 +115,32 @@
             navigator.clipboard.writeText(shareURL).then(() => {
                 alert("Product link copied to clipboard!");
             });
+        });
+
+        // Add new comment
+        $('#commentForm').on('submit', function (e) {
+            e.preventDefault();
+
+            const commentInput = $('#commentInput');
+            const newComment = commentInput.val().trim();
+
+            if (newComment) {
+                // Mock user and timestamp
+                const newCommentData = {
+                    author: "Current User",
+                    time: new Date().toLocaleString(),
+                    text: newComment,
+                };
+
+                // Add to comments array
+                comments.push(newCommentData);
+
+                // Re-render comments and clear input
+                renderComments();
+                commentInput.val('');
+            } else {
+                alert('Please write a comment before submitting!');
+            }
         });
     });
 </script>
