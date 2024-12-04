@@ -116,5 +116,31 @@
                 alert("Product link copied to clipboard!");
             });
         });
+
+        // Add new comment
+        $('#commentForm').on('submit', function (e) {
+            e.preventDefault();
+
+            const commentInput = $('#commentInput');
+            const newComment = commentInput.val().trim();
+
+            if (newComment) {
+                // Mock user and timestamp
+                const newCommentData = {
+                    author: "Current User",
+                    time: new Date().toLocaleString(),
+                    text: newComment,
+                };
+
+                // Add to comments array
+                comments.push(newCommentData);
+
+                // Re-render comments and clear input
+                renderComments();
+                commentInput.val('');
+            } else {
+                alert('Please write a comment before submitting!');
+            }
+        });
     });
 </script>
