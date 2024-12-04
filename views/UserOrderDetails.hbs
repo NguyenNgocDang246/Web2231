@@ -1,0 +1,98 @@
+<style>
+    .order-card {
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        background-color: #f9f9f9;
+    }
+
+    .order-status {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #28a745;
+        /* Green for delivered */
+    }
+
+    .order-status.pending {
+        color: #ffc107;
+        /* Yellow for pending */
+    }
+
+    .order-status.shipped {
+        color: #007bff;
+        /* Blue for shipped */
+    }
+</style>
+
+{{> Nav user=user}}
+
+<!-- Main Content -->
+<section class="py-5">
+    <div class="container">
+        <!-- Tabs for Order Status -->
+        <ul class="nav nav-pills mb-3" id="orderTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link {{#if (eq type 'pending')}}active{{/if}}" 
+                    id="pending-tab" data-bs-toggle="pill" href="#pending" role="tab"
+                    aria-controls="pending" aria-selected="true">Hàng đã đặt</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link {{#if (eq type 'shipping')}}active{{/if}}" 
+                    id="shipped-tab" data-bs-toggle="pill" href="#shipped" role="tab"
+                    aria-controls="shipped" aria-selected="false">Hàng đang giao</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link {{#if (eq type 'delivered')}}active{{/if}}" 
+                    id="delivered-tab" data-bs-toggle="pill" href="#delivered" role="tab"
+                    aria-controls="delivered" aria-selected="false">Hàng đã nhận</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="orderTabContent">
+            <!-- Hàng đã đặt -->
+            <div class="tab-pane fade {{#if (eq type 'pending')}}show active{{/if}}" 
+                id="pending" role="tabpanel" aria-labelledby="pending-tab">
+                <div class="order-card">
+                    <h5>Order #1</h5>
+                    <p><strong>Product:</strong> T-Shirt</p>
+                    <p><strong>Price:</strong> $25.00</p>
+                    <p class="order-status pending">Hàng đã đặt - Chờ xử lý</p>
+                </div>
+                <div class="order-card">
+                    <h5>Order #2</h5>
+                    <p><strong>Product:</strong> Jeans</p>
+                    <p><strong>Price:</strong> $40.00</p>
+                    <p class="order-status pending">Hàng đã đặt - Chờ xử lý</p>
+                </div>
+            </div>
+
+            <!-- Hàng đang giao -->
+            <div class="tab-pane fade {{#if (eq type 'shipping')}}show active{{/if}}" 
+                id="shipped" role="tabpanel" aria-labelledby="shipped-tab">
+                <div class="order-card">
+                    <h5>Order #3</h5>
+                    <p><strong>Product:</strong> Sunglasses</p>
+                    <p><strong>Price:</strong> $15.00</p>
+                    <p class="order-status shipped">Hàng đang giao</p>
+                </div>
+            </div>
+
+            <!-- Hàng đã nhận -->
+            <div class="tab-pane fade {{#if (eq type 'delivered')}}show active{{/if}}" 
+                id="delivered" role="tabpanel" aria-labelledby="delivered-tab">
+                <div class="order-card">
+                    <h5>Order #4</h5>
+                    <p><strong>Product:</strong> Sweater</p>
+                    <p><strong>Price:</strong> $50.00</p>
+                    <p class="order-status delivered">Hàng đã nhận</p>
+                </div>
+                <div class="order-card">
+                    <h5>Order #5</h5>
+                    <p><strong>Product:</strong> Jacket</p>
+                    <p><strong>Price:</strong> $75.00</p>
+                    <p class="order-status delivered">Hàng đã nhận</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

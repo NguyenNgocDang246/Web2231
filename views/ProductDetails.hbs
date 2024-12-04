@@ -1,0 +1,78 @@
+{{> Nav user=user}}
+
+<!-- Product Details Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Product Image -->
+            <div class="col-md-6">
+                <img src="https://via.placeholder.com/600x800" alt="Product Image" class="img-fluid rounded">
+            </div>
+            <!-- Product Info + Specifications -->
+            <div class="col-md-6">
+                <div class="card-body">
+                    <h2 id="productName">T-Shirt</h2>
+                    <p class="text-muted" id="productCategory">Category: Clothing</p>
+                    <p id="productDescription">
+                        This comfortable and stylish T-shirt is made from high-quality cotton, perfect for casual wear.
+                    </p>
+                    <h4 class="fw-bold">$<span id="productPrice">25.00</span></h4>
+                    <button class="btn btn-primary me-2" onclick="addToCart()">Add to Cart</button>
+                    <button class="btn btn-outline-secondary" onclick="shareProduct()">Share</button>
+                </div>
+
+                <!-- Horizontal Rule (divider) -->
+                <hr class="my-4">
+
+                <!-- Specifications Section -->
+                <div class="mt-4">
+                    <h3>Specifications</h3>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Material: 100% Cotton</li>
+                        <li class="list-group-item">Available Sizes: S, M, L, XL</li>
+                        <li class="list-group-item">Color: Black, White, Blue</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-dark text-white py-3">
+    <div class="container text-center">
+        <p>&copy; 2024 Clothing Shop. All Rights Reserved.</p>
+    </div>
+</footer>
+
+<script>
+    $(document).ready(function () {
+        // Mock data (this can be dynamically loaded in a real app)
+        const product = {
+            name: "T-Shirt",
+            category: "Clothing",
+            description: "This comfortable and stylish T-shirt is made from high-quality cotton, perfect for casual wear.",
+            price: 25.00,
+            image: "https://via.placeholder.com/600x800"
+        };
+
+        // Populate product details using jQuery
+        $('#productName').text(product.name);
+        $('#productCategory').text(`Category: ${product.category}`);
+        $('#productDescription').text(product.description);
+        $('#productPrice').text(product.price.toFixed(2));
+
+        // Add to Cart functionality
+        $(document).on('click', '.add-to-cart', function () {
+            alert(`${product.name} has been added to your cart!`);
+        });
+
+        // Share Product functionality
+        $(document).on('click', '.share-product', function () {
+            const shareURL = window.location.href;
+            navigator.clipboard.writeText(shareURL).then(() => {
+                alert("Product link copied to clipboard!");
+            });
+        });
+    });
+</script>

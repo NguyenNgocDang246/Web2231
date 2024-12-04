@@ -1,0 +1,126 @@
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .profile-container {
+        max-width: 900px;
+        margin: 50px auto;
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .profile-header h2 {
+        font-size: 2rem;
+        color: #333;
+    }
+
+    .profile-header p {
+        color: #6c757d;
+    }
+
+    .profile-info label {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        box-shadow: none;
+        border: 1px solid #ddd;
+        padding: 10px;
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+
+    .profile-btn {
+        width: 100%;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+
+    .profile-btn:hover {
+        background-color: #0056b3;
+    }
+
+    .profile-info {
+        margin-bottom: 20px;
+    }
+
+    footer {
+        background-color: #343a40;
+        color: #fff;
+        padding: 20px 0;
+        text-align: center;
+    }
+</style>
+
+{{> Nav user=user}}
+
+<!-- User Profile -->
+<div class="container profile-container">
+    <div class="profile-header">
+        <h2>User Profile</h2>
+        <p>Edit your personal information below</p>
+    </div>
+
+    <form>
+        <!-- Full Name and Email -->
+        <div class="row profile-info">
+            <div class="col-md-6">
+                <label for="name">Full Name</label>
+                <input type="text" class="form-control" id="name" value="John Doe">
+            </div>
+            <div class="col-md-6">
+                <label for="email">Email Address</label>
+                <input type="email" class="form-control" id="email" value="johndoe@example.com">
+            </div>
+        </div>
+
+        <!-- Phone Number and Date of Birth -->
+        <div class="row profile-info">
+            <div class="col-md-6">
+                <label for="phone">Phone Number</label>
+                <input type="text" class="form-control" id="phone" value="+1 234 567 890">
+            </div>
+            <div class="col-md-6">
+                <label for="dob">Date of Birth</label>
+                <input type="date" class="form-control" id="dob" value="1990-01-01">
+            </div>
+        </div>
+
+        <!-- Shipping Address -->
+        <div class="row profile-info">
+            <div class="col-md-12">
+                <label for="address">Shipping Address</label>
+                <input type="text" class="form-control" id="address" value="123 Main Street, New York, NY, 10001">
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="mt-4">
+            <button type="submit" class="profile-btn">Save Changes</button>
+        </div>
+    </form>
+</div>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2024 Clothing Shop. All Rights Reserved.</p>
+</footer>
