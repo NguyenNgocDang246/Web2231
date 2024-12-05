@@ -1,13 +1,12 @@
 const express = require('express');
+const productController = require('../controllers/product.c')
 const router = express.Router();
 
-router.get('/id=:id', (req, res) => {
-    res.render('ProductDetails', {
-        user: {
-            isLoggin: req.session.isLoggin,
-        }
-    });
-});
+router.get('/all', productController.getAll);
+router.get('/id=:id', productController.getOne);
+router.post('/comment/id=:id', productController.addComment);
+
+router.get('/api', productController.api);
 
 
 module.exports = router;

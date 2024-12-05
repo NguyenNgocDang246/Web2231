@@ -1,0 +1,167 @@
+{{> Nav user=user}}
+
+<!-- Main Content -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar for Filter -->
+            <div class="col-md-3">
+                <h5>Filter Products</h5>
+                <form id="filterForm">
+                    <!-- Price Range -->
+                    <div class="mb-3">
+                        <label for="priceRange" class="form-label">Price Range</label>
+                        <div class="d-flex">
+                            <input type="number" class="form-control" id="minPrice" placeholder="Min Price" min="0">
+                            <span class="mx-2">-</span>
+                            <input type="number" class="form-control" id="maxPrice" placeholder="Max Price" min="0">
+                        </div>
+                        <small>Enter a price range (e.g., 0 - 100)</small>
+                    </div>
+                    <!-- Category Filter -->
+                    <div class="mb-3">
+                        <label for="categoryFilter" class="form-label">Category</label>
+                        <select class="form-select" id="categoryFilter">
+                            <option value="">All Categories</option>
+                            {{#each categories}}
+                            <option value="{{this.name}}">{{this.name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <!-- Sort By -->
+                    <div class="mb-3">
+                        <label for="sortBy" class="form-label">Sort By</label>
+                        <select class="form-select" id="sortBy">
+                            <option value="price-low-to-high">Price: Low to High</option>
+                            <option value="price-high-to-low">Price: High to Low</option>
+                            <option value="newest">Newest</option>
+                        </select>
+                    </div>
+                    <!-- Confirm Button -->
+                    <button type="submit" class="btn btn-primary">Confirm Filter</button>
+                </form>
+            </div>
+
+            <!-- Products Section -->
+            <div class="col-md-9">
+                <!-- Search Bar -->
+                <div class="mb-4">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Search for items..." aria-label="Search for items">
+                </div>
+
+                <div class="row g-4" id="products">
+                    <!-- Products will be dynamically inserted here -->
+                </div>
+
+                <!-- Pagination -->
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center mt-4" id="pagination">
+                        <!-- Pagination links will be dynamically inserted here -->
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+{{> Footer}}
+
+<!-- Script to handle Filter, Search, and Pagination -->
+<script>
+    $(document).ready(function () {
+        // Function to load products based on filter, search, and pagination
+        function loadFilteredProducts(page = 1) {
+            // Get filter values
+            const minPrice = $('#minPrice').val();
+            const maxPrice = $('#maxPrice').val();
+            const category = $('#categoryFilter').val();
+            const sortBy = $('#sortBy').val();
+            const searchQuery = $('#searchInput').val().trim();
+
+            // Send AJAX request to server
+            $.ajax({
+                url: '/product/api', // API endpoint
+                method: 'GET',
+                data: {
+                    minPrice: minPrice,
+                    maxPrice: maxPrice,
+                    category: category,
+                    sortBy: sortBy,
+                    searchQuery: searchQuery,
+                    page: page
+                },
+                success: function (response) {
+                    // Remove old product data
+                    $('#products').empty();
+
+                    // Render new product data
+                    response.products.forEach(product => {
+                        $('#products').append(`
+                            <div class="col-md-4">
+                                <a href="/product/id=${product._id}">
+                                    <div class="card">
+                                        <img src="${product.image[0]}" class="card-img-top" alt="${product.name}">
+                                        <div class="card-body">
+                                            <h5 class="card-title">${product.name}</h5>
+                                            <p class="card-text">${product.price} đ</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        `);
+                    });
+
+                    // Handle pagination
+                    const currentPage = response.currentPage;
+                    const totalPages = response.totalPages;
+                    let paginationHtml = '';
+
+                    // If totalPages is large, show only a range of pages around currentPage
+                    const pageStart = Math.max(1, currentPage - 2);
+                    const pageEnd = Math.min(totalPages, currentPage + 2);
+
+                    // Add previous button
+                    if (currentPage > 1) {
+                        paginationHtml += `<li class="page-item"><a class="page-link" href="#" data-page="${currentPage - 1}" aria-label="Previous">&laquo;</a></li>`;
+                    }
+
+                    // Add page numbers (current, 2 before, 2 after)
+                    for (let i = pageStart; i <= pageEnd; i++) {
+                        paginationHtml += `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                            <a class="page-link" href="#" data-page="${i}">${i}</a>
+                        </li>`;
+                    }
+
+                    // Add next button
+                    if (currentPage < totalPages) {
+                        paginationHtml += `<li class="page-item"><a class="page-link" href="#" data-page="${currentPage + 1}" aria-label="Next">&raquo;</a></li>`;
+                    }
+
+                    $('#pagination').html(paginationHtml);
+                }
+            });
+        }
+
+        // Filter form submit event
+        $('#filterForm').on('submit', function (e) {
+            e.preventDefault();
+            loadFilteredProducts();
+        });
+
+        // Search bar input event
+        $('#searchInput').on('input', function () {
+            loadFilteredProducts();
+        });
+
+        // Pagination click event
+        $(document).on('click', '.page-link', function (e) {
+            e.preventDefault();
+            const page = $(this).data('page');
+            loadFilteredProducts(page);
+        });
+
+        // Initial load of products
+        loadFilteredProducts();
+    });
+</script>

@@ -28,18 +28,22 @@
         <div class="row g-4">
             <!-- Product Image -->
             <div class="col-md-6">
-                <img src="https://via.placeholder.com/600x800" alt="Product Image" class="img-fluid rounded">
+                <img src="{{index product.image 0}}" alt="Product Image" class="img-fluid rounded">
             </div>
             <!-- Product Info + Specifications -->
             <div class="col-md-6">
                 <div class="card-body">
-                    <h2 id="productName">T-Shirt</h2>
-                    <p class="text-muted" id="productCategory">Category: Clothing</p>
-                    <p id="productDescription">
-                        This comfortable and stylish T-shirt is made from high-quality cotton, perfect for casual wear.
+                    <h2 id="productName">{{product.name}}</h2>
+                    <p class="text-muted" id="productCategory">Category:
+                        {{#each product.categoryNames}}
+                        {{this}} {{#unless @last}}, {{/unless}}
+                        {{/each}}
                     </p>
-                    <h4 class="fw-bold">$<span id="productPrice">25.00</span></h4>
-                    <button class="btn btn-primary me-2" onclick="addToCart()">Add to Cart</button>
+                    <p id="productDescription">
+                        {{product.description}}
+                    </p>
+                    <h4 class="fw-bold"><span id="productPrice">{{product.price}} đ</span></h4>
+                    <button class="btn btn-primary me-2" id="addToCart()">Add to Cart</button>
                     <button class="btn btn-outline-secondary" onclick="shareProduct()">Share</button>
                 </div>
 
@@ -50,63 +54,95 @@
                 <div class="mt-4">
                     <h3>Specifications</h3>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Material: 100% Cotton</li>
-                        <li class="list-group-item">Available Sizes: S, M, L, XL</li>
-                        <li class="list-group-item">Color: Black, White, Blue</li>
+                        <li class="list-group-item">Brand: {{product.brandNames}}</li>
+                        <li class="list-group-item">Available Sizes:
+                            {{#each product.size}}
+                            {{this}} {{#unless @last}}, {{/unless}}
+                            {{/each}}
+                        </li>
+                        <li class="list-group-item">Color:
+                            {{#each product.colors}}
+                            {{this}} {{#unless @last}}, {{/unless}}
+                            {{/each}}
+                        </li>
                     </ul>
                 </div>
 
-                <!-- Comments Section -->
-                <div class="mt-5">
-                    <h3>Comments</h3>
-
-                    <!-- Add Comment Form -->
-                    <form id="commentForm" class="mb-4">
-                        <div class="mb-3">
-                            <textarea id="commentInput" class="form-control" rows="3"
-                                placeholder="Write your comment..." required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Submit Comment</button>
-                    </form>
-
-                    <!-- Comments List -->
-                    <div id="commentsList">
-                        <!-- Comments will be dynamically inserted here -->
-                    </div>
-                </div>
-
             </div>
+
+            <div class="mt-5">
+                <h3>Comments</h3>
+
+                <!-- Add Comment Form -->
+                <form id="commentForm" class="mb-4">
+                    <!-- Rating Section -->
+                    <div class="mb-3">
+                        <label for="ratingInput" class="form-label">Your Rating</label>
+                        <select id="ratingInput" class="form-select" required>
+                            <option value="" disabled selected>Select your rating</option>
+                            <option value="5">5 - Excellent</option>
+                            <option value="4">4 - Very Good</option>
+                            <option value="3">3 - Good</option>
+                            <option value="2">2 - Fair</option>
+                            <option value="1">1 - Poor</option>
+                        </select>
+                    </div>
+
+                    <!-- Comment Textarea -->
+                    <div class="mb-3">
+                        <textarea id="commentInput" class="form-control" rows="3" placeholder="Write your comment..."
+                            required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Submit Comment</button>
+                </form>
+
+                <!-- Comments List -->
+                <div id="commentsList">
+                    {{#each reviews}}
+                    <div class="card my-3">
+                        <div class="card-body">
+                            <h5 class="card-title">{{this.userName}}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                Rating:
+                                <span class="badge bg-success">{{this.rating}}/5</span>
+                            </h6>
+                            <p class="card-text">{{this.comment}}</p>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+
         </div>
     </div>
 </section>
 
 <!-- Footer -->
-<footer class="bg-dark text-white py-3">
-    <div class="container text-center">
-        <p>&copy; 2024 Clothing Shop. All Rights Reserved.</p>
-    </div>
-</footer>
+{{> Footer}}
 
 <script>
     $(document).ready(function () {
-        // Mock data (this can be dynamically loaded in a real app)
-        const product = {
-            name: "T-Shirt",
-            category: "Clothing",
-            description: "This comfortable and stylish T-shirt is made from high-quality cotton, perfect for casual wear.",
-            price: 25.00,
-            image: "https://via.placeholder.com/600x800"
-        };
-
-        // Populate product details using jQuery
-        $('#productName').text(product.name);
-        $('#productCategory').text(`Category: ${product.category}`);
-        $('#productDescription').text(product.description);
-        $('#productPrice').text(product.price.toFixed(2));
 
         // Add to Cart functionality
-        $(document).on('click', '.add-to-cart', function () {
-            alert(`${product.name} has been added to your cart!`);
+        $('#addToCartBtn').on('click', function () {
+            const productId = "{{product._id}}";  // Assuming product._id is available
+            const quantity = 1;  // Default quantity, can be modified if needed
+
+            $.ajax({
+                url: '/cart/add',  // Server endpoint to handle adding to cart
+                method: 'POST',
+                data: {
+                    productId: productId,
+                    quantity: quantity
+                },
+                success: function (response) {
+                    alert(response.message);  // Show a success message
+                },
+                error: function (error) {
+                    alert('Error adding product to cart.');
+                }
+            });
         });
 
         // Share Product functionality
@@ -123,23 +159,40 @@
 
             const commentInput = $('#commentInput');
             const newComment = commentInput.val().trim();
+            const rating = $('#ratingInput').val();
 
-            if (newComment) {
-                // Mock user and timestamp
-                const newCommentData = {
-                    author: "Current User",
-                    time: new Date().toLocaleString(),
-                    text: newComment,
-                };
-
-                // Add to comments array
-                comments.push(newCommentData);
-
-                // Re-render comments and clear input
-                renderComments();
-                commentInput.val('');
+            if (newComment && rating) {
+                // Send AJAX request to server to save comment
+                $.ajax({
+                    url: '/product/comment/id={{product._id}}',  // Server endpoint to handle comments
+                    method: 'POST',
+                    data: {
+                        rating: rating,
+                        comment: newComment
+                    },
+                    success: function (response) {
+                        // Assuming response contains the new comment data
+                        const newCommentData = response.comment;
+                        $('#commentsList').prepend(`
+                            <div class="card my-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">${newCommentData.userName}</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">
+                                        Rating: <span class="badge bg-success">${newCommentData.rating}/5</span>
+                                    </h6>
+                                    <p class="card-text">${newCommentData.comment}</p>
+                                </div>
+                            </div>
+                        `);
+                        commentInput.val('');  // Clear the input field
+                        $('#ratingInput').val('');  // Clear the rating
+                    },
+                    error: function (error) {
+                        alert('Error submitting comment.');
+                    }
+                });
             } else {
-                alert('Please write a comment before submitting!');
+                alert('Please write a comment and select a rating before submitting!');
             }
         });
     });
