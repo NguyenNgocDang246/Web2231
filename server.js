@@ -14,10 +14,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
-    secret: 'your-secret-key',
+    secret: process.env.SS_KEY,
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false, maxAge: 1 * 24 * 60 * 60 * 1000 }
+    cookie: { secure: false }
 }));
 
 
@@ -40,13 +40,30 @@ hbs.handlebars.registerHelper('index', function(array, index) {
     return null;  // Trả về null nếu mảng rỗng hoặc không phải là mảng
 });
 
+const authMiddleware = (req, res, next) => {
+    const openRoutes = ['/page/login', '/page/register'];
+    if(openRoutes.includes(req.path))
+    {
+        return next();
+    }
+    if (req.session.user) 
+    {
+        if(req.session.user.remember)
+            req.session.cookie.maxAge = 2 * 24 * 60 * 60 * 1000;
+        return next();
+    }
+    res.redirect('/page/login');
+}
+
+app.use(authMiddleware);
+
 app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
 app.set('views', './views');
 
 app.use('/page', require('./routes/page'));
 app.use('/product', require('./routes/product'));
-app.use('/user', require('./routes/user/normalUser'));
+app.use('/user', require('./routes/user'));
 app.use('/cart', require('./routes/cart'));
 
 const { connectDB } = require('./models/db');

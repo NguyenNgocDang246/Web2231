@@ -5,7 +5,7 @@
     }
 </style>
 
-{{> Nav user=user}}
+{{> Nav}}
 
 <!-- Checkout Section -->
 <section class="py-5">
@@ -23,13 +23,24 @@
                                     <th>Quantity</th>
                                     <th>Price</th>
                                     <th class="checkbox-center">Select to Buy</th>
+                                    <th class="checkbox-center">Remove</th>
                                 </tr>
                             </thead>
                             <tbody id="orderSummary">
                                 <!-- Products will be populated here -->
+                                {{#each cartItems}}
+                                <tr data-id="{{this._id}}">
+                                    <td>{{this.name}}</td>
+                                    <td>{{this.quantity}}</td>
+                                    <td>{{this.price}}</td>
+                                    <td class="checkbox-center"><input type="checkbox" class="product-checkbox"
+                                            data-id="{{this._id}}" data-price="{{this.price}}"></td>
+                                    <td class="checkbox-center"><button type="button" class="btn btn-danger btn-sm remove-item">Xóa</button></td>
+                                </tr>
+                                {{/each}}
                             </tbody>
                         </table>
-                        <h4 class="fw-bold">Total: $<span id="totalPrice">0.00</span></h4>
+                        <h4 class="fw-bold">Total: <span id="totalPrice"></span>đ</h4>
                     </div>
                 </div>
             </div>
@@ -54,8 +65,8 @@
                             <div class="mb-3">
                                 <label for="paymentMethod" class="form-label">Payment Method</label>
                                 <select class="form-select" id="paymentMethod" required>
-                                    <option value="creditCard">Credit Card</option>
-                                    <option value="paypal">PayPal</option>
+                                    <option value="creditCard">Online banking</option>
+                                    <option value="paypal">Cash payment</option>
                                 </select>
                             </div>
                             <div class="mb-3">
@@ -74,62 +85,98 @@
     </div>
 </section>
 
-<!-- Footer -->
-<footer class="bg-dark text-white py-3">
-    <div class="container text-center">
-        <p>&copy; 2024 Clothing Shop. All Rights Reserved.</p>
-    </div>
-</footer>
+{{> Footer}}
 
 <script>
-    // Mock data (can be dynamically loaded in a real app)
-    const products = [
-        { id: 1, name: "T-Shirt", quantity: 1, price: 25.00 },
-        { id: 2, name: "Jeans", quantity: 2, price: 40.00 },
-        { id: 3, name: "Sneakers", quantity: 1, price: 60.00 }
-    ];
+    $(document).ready(function () {
+        // Function to populate order summary dynamically
+        function populateOrderSummary() {
+            let totalPrice = 0;
 
-    // Function to populate order summary dynamically
-    function populateOrderSummary() {
-        const orderSummary = document.getElementById('orderSummary');
-        let totalPrice = 0;
-        orderSummary.innerHTML = '';  // Clear any previous content
+            // Lặp qua các dòng trong bảng và tính tổng giá trị các sản phẩm được chọn
+            $('#orderSummary tr').each(function () {
+                const checkbox = $(this).find('.product-checkbox');
+                if (checkbox.prop('checked')) {
+                    const price = parseFloat(checkbox.data('price')); // Lấy giá từ data-price
+                    const quantity = parseInt($(this).find('td:nth-child(2)').text()); // Lấy số lượng từ cột 2
+                    totalPrice += price * quantity; // Cộng giá trị vào tổng
+                }
+            });
 
-        products.forEach(product => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                    <td>${product.name}</td>
-                    <td>${product.quantity}</td>
-                    <td>$${product.price.toFixed(2)}</td>
-                    <td class="checkbox-center"><input type="checkbox" class="product-checkbox" data-id="${product.id}" data-price="${product.price}" ${product.selected ? 'checked' : ''}></td>
-                `;
-            orderSummary.appendChild(row);
+            // Cập nhật tổng giá trị
+            $('#totalPrice').text(totalPrice);
+        }
 
-            // Calculate the total price based on selected items
-            if (product.selected) {
-                totalPrice += product.price * product.quantity;
-            }
+        // Event listener for checkbox change
+        $('#orderSummary').on('change', '.product-checkbox', function () {
+            populateOrderSummary(); // Recalculate total price khi checkbox thay đổi
         });
 
-        document.getElementById('totalPrice').textContent = totalPrice.toFixed(2);
-    }
+        // Handle item removal
+        $('#orderSummary').on('click', '.remove-item', function () {
+            const itemId = $(this).closest('tr').data('id');  // Lấy id của item muốn xóa
 
-    // Event listener for checkbox change
-    document.getElementById('orderSummary').addEventListener('change', function (event) {
-        if (event.target.classList.contains('product-checkbox')) {
-            const productId = event.target.getAttribute('data-id');
-            const product = products.find(p => p.id == productId);
-            product.selected = event.target.checked;
-            populateOrderSummary();  // Recalculate total price
-        }
+            // Gửi AJAX request để xóa item
+            $.ajax({
+                url: '/cart/remove', // URL xử lý xóa item
+                method: 'POST',
+                data: { productId: itemId },
+                success: function (response) {
+                    // Xóa item khỏi bảng
+                    $(`[data-id=${itemId}]`).remove();
+                    populateOrderSummary();  // Recalculate total price sau khi xóa
+                },
+                error: function () {
+                    alert('Failed to remove item.');
+                }
+            });
+        });
+
+        // Handle form submission
+        $('#paymentForm').on('submit', function (event) {
+            event.preventDefault();  // Prevent form from submitting
+
+            // Lấy tất cả các sản phẩm đã chọn
+            const selectedItems = [];
+            $('#orderSummary tr').each(function () {
+                const checkbox = $(this).find('.product-checkbox');
+                if (checkbox.prop('checked')) {
+                    const productId = checkbox.data('id');
+                    const quantity = parseInt($(this).find('td:nth-child(2)').text());
+                    const price = parseFloat(checkbox.data('price'));
+
+                    selectedItems.push({ productId, quantity, price });
+                }
+            });
+
+            // Lấy thông tin thanh toán từ form
+            const fullName = $('#fullName').val();
+            const address = $('#address').val();
+            const paymentMethod = $('#paymentMethod').val();
+            const insurance = $('#insuranceCheckbox').prop('checked') ? true : false;
+
+            // Gửi dữ liệu thanh toán và giỏ hàng đã chọn tới server
+            $.ajax({
+                url: '/checkout/confirm',  // URL xử lý thanh toán
+                method: 'POST',
+                data: {
+                    selectedItems: selectedItems,
+                    fullName: fullName,
+                    address: address,
+                    paymentMethod: paymentMethod,
+                    insurance: insurance
+                },
+                success: function (response) {
+                    alert('Thank you for your purchase! Your order has been confirmed.');
+                    // Redirect hoặc xử lý kết quả
+                },
+                error: function () {
+                    alert('Failed to confirm purchase.');
+                }
+            });
+        });
+
+        // Initial population of the order summary
+        populateOrderSummary();  // Khởi tạo giỏ hàng khi tải trang
     });
-
-    // Handle form submission
-    document.getElementById('paymentForm').addEventListener('submit', function (event) {
-        event.preventDefault();  // Prevent form from submitting
-        alert('Thank you for your purchase! Your order has been confirmed.');
-    });
-
-    // Initial population of the order summary
-    populateOrderSummary();
 </script>

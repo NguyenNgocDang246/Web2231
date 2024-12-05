@@ -45,16 +45,16 @@
         <h1>Clothing Shop</h1>
         <p>Welcome back! Please log in to your account.</p>
     </div>
-    {{#if fails}}
+    {{#if fail}}
         <div class="alert alert-danger text-center" role="alert">
             Incorrect username or password. Please try again.
         </div>
     {{/if}}
-    <form>
+    <form method="POST" action="/page/login">
         <!-- Username -->
         <div class="mb-3">
-            <label for="usename" class="form-label">Email address</label>
-            <input type="text" class="form-control" name="usename" placeholder="Enter your email" required>
+            <label for="usename" class="form-label">Your Username</label>
+            <input type="text" class="form-control" name="username" placeholder="Enter your username" required>
         </div>
 
         <!-- Password -->
@@ -74,7 +74,9 @@
 
         <!-- Register Link -->
         <div class="mt-3 text-center">
-            <p>Don't have an account? <a href="/register" class="text-decoration-none">Register here</a></p>
+            <p>Don't have an account? <a href="/page/register" class="text-decoration-none">Register here</a></p>
         </div>
     </form>
 </div>
+
+{{> Footer}}

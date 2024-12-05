@@ -1,6 +1,7 @@
 {{> Nav user=user}}
 
 <style>
+    /* Styles for the page */
     .comment {
         border-bottom: 1px solid #ddd;
         padding: 10px 0;
@@ -30,6 +31,7 @@
             <div class="col-md-6">
                 <img src="{{index product.image 0}}" alt="Product Image" class="img-fluid rounded">
             </div>
+
             <!-- Product Info + Specifications -->
             <div class="col-md-6">
                 <div class="card-body">
@@ -43,8 +45,18 @@
                         {{product.description}}
                     </p>
                     <h4 class="fw-bold"><span id="productPrice">{{product.price}} đ</span></h4>
-                    <button class="btn btn-primary me-2" id="addToCart()">Add to Cart</button>
-                    <button class="btn btn-outline-secondary" onclick="shareProduct()">Share</button>
+
+                    <div class="d-flex align-items-center justify-content-between">
+                        <!-- Add to Cart -->
+                        <label for="quantity" class="me-2">Quantity:</label>
+                        <input type="number" id="quantityInput" class="form-control w-25" value="1" min="1">
+                        <button class="btn btn-primary me-4" id="addToCartBtn">Add to Cart</button>
+
+                        <!-- Share -->
+                        <button class="btn btn-outline-secondary" id="shareProductBtn">Share</button>
+                    </div>
+
+                    
                 </div>
 
                 <!-- Horizontal Rule (divider) -->
@@ -67,133 +79,132 @@
                         </li>
                     </ul>
                 </div>
-
             </div>
+        </div>
 
-            <div class="mt-5">
-                <h3>Comments</h3>
+        <!-- Comments Section -->
+        <div class="mt-5">
+            <h3>Comments</h3>
 
-                <!-- Add Comment Form -->
-                <form id="commentForm" class="mb-4">
-                    <!-- Rating Section -->
-                    <div class="mb-3">
-                        <label for="ratingInput" class="form-label">Your Rating</label>
-                        <select id="ratingInput" class="form-select" required>
-                            <option value="" disabled selected>Select your rating</option>
-                            <option value="5">5 - Excellent</option>
-                            <option value="4">4 - Very Good</option>
-                            <option value="3">3 - Good</option>
-                            <option value="2">2 - Fair</option>
-                            <option value="1">1 - Poor</option>
-                        </select>
-                    </div>
-
-                    <!-- Comment Textarea -->
-                    <div class="mb-3">
-                        <textarea id="commentInput" class="form-control" rows="3" placeholder="Write your comment..."
-                            required></textarea>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Submit Comment</button>
-                </form>
-
-                <!-- Comments List -->
-                <div id="commentsList">
-                    {{#each reviews}}
-                    <div class="card my-3">
-                        <div class="card-body">
-                            <h5 class="card-title">{{this.userName}}</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">
-                                Rating:
-                                <span class="badge bg-success">{{this.rating}}/5</span>
-                            </h6>
-                            <p class="card-text">{{this.comment}}</p>
-                        </div>
-                    </div>
-                    {{/each}}
+            <!-- Add Comment Form -->
+            <form id="commentForm" class="mb-4">
+                <div class="mb-3">
+                    <label for="ratingInput" class="form-label">Your Rating</label>
+                    <select id="ratingInput" class="form-select" required>
+                        <option value="" disabled selected>Select your rating</option>
+                        <option value="5">5 - Excellent</option>
+                        <option value="4">4 - Very Good</option>
+                        <option value="3">3 - Good</option>
+                        <option value="2">2 - Fair</option>
+                        <option value="1">1 - Poor</option>
+                    </select>
                 </div>
-            </div>
 
+                <div class="mb-3">
+                    <textarea id="commentInput" class="form-control" rows="3" placeholder="Write your comment..."
+                        required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit Comment</button>
+            </form>
+
+            <!-- Comments List -->
+            <div id="commentsList">
+                {{#each reviews}}
+                <div class="card my-3">
+                    <div class="card-body">
+                        <h5 class="card-title">{{this.userName}}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            Rating:
+                            <span class="badge bg-success">{{this.rating}}/5</span>
+                        </h6>
+                        <p class="card-text">{{this.comment}}</p>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
         </div>
     </div>
 </section>
 
-<!-- Footer -->
 {{> Footer}}
 
 <script>
     $(document).ready(function () {
-
         // Add to Cart functionality
         $('#addToCartBtn').on('click', function () {
-            const productId = "{{product._id}}";  // Assuming product._id is available
-            const quantity = 1;  // Default quantity, can be modified if needed
+            const productId = "{{product._id}}"; // Assuming product._id is available
+            const quantity = $('#quantityInput').val();; // Default quantity, can be modified if needed
 
             $.ajax({
-                url: '/cart/add',  // Server endpoint to handle adding to cart
+                url: '/cart/add',
                 method: 'POST',
                 data: {
                     productId: productId,
                     quantity: quantity
                 },
                 success: function (response) {
-                    alert(response.message);  // Show a success message
+                    alert('Product added to cart successfully!');
                 },
-                error: function (error) {
+                error: function () {
                     alert('Error adding product to cart.');
                 }
             });
         });
 
-        // Share Product functionality
-        $(document).on('click', '.share-product', function () {
-            const shareURL = window.location.href;
-            navigator.clipboard.writeText(shareURL).then(() => {
-                alert("Product link copied to clipboard!");
+        // Share Product functionality (copy to clipboard)
+        $('#shareProductBtn').on('click', function () {
+            const productLink = window.location.href;
+
+            // Copy link to clipboard
+            navigator.clipboard.writeText(productLink).then(() => {
+                alert('Product link copied to clipboard! Now you can paste it anywhere.');
+            }).catch(err => {
+                alert('Failed to copy the product link.');
+                console.error('Clipboard error:', err);
             });
         });
 
-        // Add new comment
+        // Add Comment functionality
         $('#commentForm').on('submit', function (e) {
             e.preventDefault();
 
-            const commentInput = $('#commentInput');
-            const newComment = commentInput.val().trim();
             const rating = $('#ratingInput').val();
+            const comment = $('#commentInput').val().trim();
 
-            if (newComment && rating) {
-                // Send AJAX request to server to save comment
+            if (rating && comment) {
                 $.ajax({
-                    url: '/product/comment/id={{product._id}}',  // Server endpoint to handle comments
+                    url: '/product/comment',
                     method: 'POST',
                     data: {
+                        productID: "{{product._id}}", // Assuming product._id is available
                         rating: rating,
-                        comment: newComment
+                        comment: comment
                     },
                     success: function (response) {
-                        // Assuming response contains the new comment data
-                        const newCommentData = response.comment;
-                        $('#commentsList').prepend(`
-                            <div class="card my-3">
-                                <div class="card-body">
-                                    <h5 class="card-title">${newCommentData.userName}</h5>
-                                    <h6 class="card-subtitle mb-2 text-muted">
-                                        Rating: <span class="badge bg-success">${newCommentData.rating}/5</span>
-                                    </h6>
-                                    <p class="card-text">${newCommentData.comment}</p>
-                                </div>
+                        const newComment = `
+                        <div class="card my-3">
+                            <div class="card-body">
+                                <h5 class="card-title">${response.comment.userName}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">
+                                    Rating: <span class="badge bg-success">${response.comment.rating}/5</span>
+                                </h6>
+                                <p class="card-text">${response.comment.comment}</p>
                             </div>
-                        `);
-                        commentInput.val('');  // Clear the input field
-                        $('#ratingInput').val('');  // Clear the rating
+                        </div>
+                    `;
+                        $('#commentsList').prepend(newComment);
+                        $('#commentInput').val('');
+                        $('#ratingInput').val('');
                     },
-                    error: function (error) {
+                    error: function () {
                         alert('Error submitting comment.');
                     }
                 });
             } else {
-                alert('Please write a comment and select a rating before submitting!');
+                alert('Please fill out both fields.');
             }
         });
     });
+
 </script>
