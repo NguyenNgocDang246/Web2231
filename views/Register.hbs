@@ -36,6 +36,11 @@
     .btn-custom:hover {
         background-color: #0056b3;
     }
+
+    .error {
+        color: red;
+        font-size: 0.9rem;
+    }
 </style>
 
 {{> Nav user=user}}
@@ -46,17 +51,29 @@
         <p>Create a new account to get started!</p>
     </div>
 
-    <form>
+    <form id="registerForm">
         <!-- Full Name -->
         <div class="mb-3">
             <label for="fullName" class="form-label">Full Name</label>
             <input type="text" class="form-control" id="fullName" placeholder="Enter your full name" required>
         </div>
 
+        <!-- Date of Birth -->
+        <div class="mb-3">
+            <label for="dob" class="form-label">Date of Birth</label>
+            <input type="date" class="form-control" id="dob" required>
+        </div>
+
         <!-- Email -->
         <div class="mb-3">
             <label for="email" class="form-label">Email address</label>
             <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+        </div>
+
+        <!-- Username -->
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username" placeholder="Enter a username" required>
         </div>
 
         <!-- Password -->
@@ -69,14 +86,69 @@
         <div class="mb-3">
             <label for="confirmPassword" class="form-label">Confirm Password</label>
             <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm your password" required>
+            <div id="error-message" class="error" style="display: none;">Passwords do not match!</div>
         </div>
+
+        <!-- Duplicate User Error -->
+        <div id="duplicateError" class="error" style="display: none;">User already exists. Please try again with a different username or email.</div>
 
         <!-- Register Button -->
         <button type="submit" class="btn btn-custom w-100">Register</button>
 
         <!-- Login Link -->
         <div class="mt-3 text-center">
-            <p>Already have an account? <a href="/user/login" class="text-decoration-none">Login here</a></p>
+            <p>Already have an account? <a href="/page/login" class="text-decoration-none">Login here</a></p>
         </div>
     </form>
 </div>
+
+{{> Footer}}
+
+<script>
+    $(document).ready(function() {
+        $('#registerForm').on('submit', function(event) {
+            event.preventDefault();  // Ngừng gửi form
+
+            const password = $('#password').val();
+            const confirmPassword = $('#confirmPassword').val();
+            const errorMessage = $('#error-message');
+            const duplicateError = $('#duplicateError');
+
+            // Kiểm tra mật khẩu và confirm mật khẩu
+            if (password !== confirmPassword) {
+                // Hiển thị thông báo lỗi mật khẩu không khớp
+                errorMessage.show();
+                return;
+            } else {
+                // Ẩn thông báo lỗi mật khẩu không khớp
+                errorMessage.hide();
+            }
+
+            // Gửi dữ liệu đăng ký tới backend (AJAX)
+            const userData = {
+                username: $('#username').val(),
+                password: password,
+                name: $('#fullName').val(),
+                dob: $('#dob').val(),
+                email: $('#email').val()
+            };
+
+            $.ajax({
+                url: '/page/register',  // URL của API đăng ký
+                method: 'POST',
+                data: userData,
+                success: function(response) {
+                    // Thành công (có thể chuyển hướng đến trang khác)
+                    alert('User registered successfully!');
+                    window.location.href = '/page/login';  // Redirect tới trang đăng nhập
+                },
+                error: function(xhr) {
+                    // Nếu có lỗi từ backend (duplicate user)
+                    if (xhr.status === 400 && xhr.responseText === 'duplicate user') {
+                        duplicateError.show();  // Hiển thị thông báo lỗi người dùng đã tồn tại
+                    }
+                }
+            });
+        });
+    });
+</script>

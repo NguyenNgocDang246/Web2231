@@ -7,7 +7,7 @@ const brandSchema = new mongoose.Schema({
 
 
 // Tạo model từ schema
-const Brands = mongoose.model('Brands', brandSchema, 'brands');
+const Brand = mongoose.model('Brand', brandSchema, 'brands');
 
 module.exports = ({
     all: async (page = 1, brandPerPage = null) => {
@@ -15,12 +15,12 @@ module.exports = ({
             const skip = (page - 1) * brandPerPage;
             if(brandPerPage)
             {
-                const brands = await Brands.find().skip(skip).limit(brandPerPage).lean();
+                const brands = await Brand.find().skip(skip).limit(brandPerPage).lean();
                 return brands;
             }
             else 
             {
-                const brands = await Brands.find().skip(skip).lean();
+                const brands = await Brand.find().skip(skip).lean();
                 return brands;
             }
             
@@ -33,7 +33,7 @@ module.exports = ({
     one: async (id) => {
         try
         {
-            const brand = await Brands.findById(id).lean();
+            const brand = await Brand.findById(id).lean();
             return brand;
         }
         catch(e)

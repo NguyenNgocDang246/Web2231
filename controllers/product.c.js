@@ -77,10 +77,18 @@ module.exports = ({
             currentPage: +page
         });
     },
-    addComment: (req, res) => {
-        const { productId } = req.params;
-        const { rating, comment } = req.body;
+    addComment: async (req, res) => {
+        const { rating, comment, productID } = req.body;
+        const username = req.session.user.username;
+        const user = await userModel.findOne({username: username});
         // Logic thêm bình luận vào sản phẩm
-        res.json({ comment: { userName: 'Current User', rating, comment } });
+        const newReview = {
+            product: productID,
+            user: user._id,
+            rating: rating,
+            comment: comment,
+        };
+        reviewModel.add(newReview);
+        res.json({ comment: { userName: username, rating, comment } });
     },
 })

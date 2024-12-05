@@ -1,28 +1,10 @@
-const productModel = require('../models/product.m');
+const userModel = require('../models/user.m');
+const sha256 = require('js-sha256');
 
 module.exports = ({
-    home: async (req, res) => {
-        const products = await productModel.all();
-        
-        products.forEach(product => {
-            if (product.image && Array.isArray(product.image)) 
-            {
-                product.mainImg = product.image[0]; // Lấy hình ảnh đầu tiên
-            } 
-            else 
-            {
-                product.mainImg = null; // Không có hình ảnh
-            }
-        });
-        res.render('Home', {
-            user:  req.session.user,
-            products: products
-        });
-    },
     login: async (req, res) => {
         const { username, password, remember } = req.body;
-        const users = await userModel.getAll();
-        const user = users.find(u => u.psername === username);
+        const user = await userModel.findOne({username: username});
         if (user) {
             const salt = user.password.slice(64);
             const pwHashSaved = user.password.slice(0, 64);
@@ -34,38 +16,45 @@ module.exports = ({
                 req.session.user = {
                     username: user.username, 
                     remember: false,
-                    role: 'normal'};
-
+                    role: user.role
+                };
                 if(remember) 
                 {
                     req.session.cookie.maxAge = 2 * 24 * 60 * 60 * 1000;
                     req.session.user.remember = true;
                 }
-                else req.session.cookie.expires = false;
-                return res.redirect('/home');
+                else req.session.cookie.expires = null;
+                return res.redirect('/product/all');
             }
-            else res.redirect('/login?fail=true');
+            else res.redirect('/page/login?fail=true');
         }
-        else res.redirect('/login?fail=true');
+        else res.redirect('/page/login?fail=true');
     },
     register: async (req, res) => {
-        const newUser = req.body;
-        const users = await userModel.getAll();
-        const hasAcc = users.find(u => u.username === newUser.username);
+        let {username, password, name, email, dob} = req.body;
+        const hasAcc = await userModel.findOne({username: username});
         if(hasAcc) 
         {
-            res.send('Duplicate username');
+            res.status(400).send('duplicate user');
             return;
         }
-        newUser.Permission = 1;
 
         const salt = (new Date()).getTime().toString();
-        const pw_salt = newUser.password + salt;
+        const pw_salt = password + salt;
         const pwHash = sha256(pw_salt);
-        newUser.password = pwHash + salt;
+        password = pwHash + salt;
+
+        const newUser = {
+            name: name,
+            dob: dob,
+            email: email,
+            username: username,
+            password: password,
+            role: "normal_user"
+        };
 
         userModel.add(newUser);
-        res.redirect('/login');
+        res.redirect('/page/login');
     },
     logout: (req, res) => {
         req.session.destroy((err) => {
