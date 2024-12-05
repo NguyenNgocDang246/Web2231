@@ -45,18 +45,28 @@
         <h1>Clothing Shop</h1>
         <p>Welcome back! Please log in to your account.</p>
     </div>
-
+    {{#if fails}}
+        <div class="alert alert-danger text-center" role="alert">
+            Incorrect username or password. Please try again.
+        </div>
+    {{/if}}
     <form>
-        <!-- Email -->
+        <!-- Username -->
         <div class="mb-3">
-            <label for="email" class="form-label">Email address</label>
-            <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+            <label for="usename" class="form-label">Email address</label>
+            <input type="text" class="form-control" name="usename" placeholder="Enter your email" required>
         </div>
 
         <!-- Password -->
         <div class="mb-3">
             <label for="password" class="form-label">Password</label>
-            <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+            <input type="password" class="form-control" name="password" placeholder="Enter your password" required>
+        </div>
+
+         <!-- Checkbox "Ghi nhớ đăng nhập" -->
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" name="remember" id="remember">
+            <label class="form-check-label" for="remember">Remember me</label>
         </div>
 
         <!-- Login Button -->
@@ -64,7 +74,7 @@
 
         <!-- Register Link -->
         <div class="mt-3 text-center">
-            <p>Don't have an account? <a href="/user/register" class="text-decoration-none">Register here</a></p>
+            <p>Don't have an account? <a href="/register" class="text-decoration-none">Register here</a></p>
         </div>
     </form>
 </div>
