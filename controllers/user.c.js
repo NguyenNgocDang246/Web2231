@@ -10,6 +10,11 @@ module.exports = ({
         const cart = await cartModel.findOne({user: user._id});
         const products = await productModel.all();
 
+        if (!cart || !cart.items || cart.items.length === 0) 
+        {
+            return res.render('UserCartDetails', { cartItems: [] });
+        }
+
         const cartItems = cart.items.map(item => {
             const product = products.find(product => product._id.toString() === item.product.toString());
             

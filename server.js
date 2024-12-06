@@ -4,6 +4,7 @@ const { create } = require('express-handlebars');
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
+const passport = require('./auth');
 
 const PORT = process.env.PORT || 3000
 
@@ -29,37 +30,51 @@ const hbs = create({
     defaultLayout: 'main'
 })
 
-hbs.handlebars.registerHelper('eq', function(a, b) {
+hbs.handlebars.registerHelper('eq', function (a, b) {
     return a === b;
 });
 
-hbs.handlebars.registerHelper('index', function(array, index) {
+hbs.handlebars.registerHelper('index', function (array, index) {
     if (Array.isArray(array) && array.length > 0) {
         return array[index];
     }
     return null;  // Trả về null nếu mảng rỗng hoặc không phải là mảng
 });
 
+app.use(passport.initialize());
+app.use(passport.session());
+
 const authMiddleware = (req, res, next) => {
-    const openRoutes = ['/page/login', '/page/register'];
-    if(openRoutes.includes(req.path))
-    {
+    const openRoutes = ['/page/login', '/page/register', '/auth/google', '/auth/google/callback'];
+    if (openRoutes.includes(req.path)) {
         return next();
     }
-    if (req.session.user) 
-    {
-        if(req.session.user.remember)
+    if (req.session.user) {
+        if (req.session.user.remember)
             req.session.cookie.maxAge = 2 * 24 * 60 * 60 * 1000;
         return next();
     }
     res.redirect('/page/login');
 }
-
 app.use(authMiddleware);
 
 app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
 app.set('views', './views');
+
+app.get("/auth/google",
+    passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+app.get("/auth/google/callback",
+    passport.authenticate("google", { failureRedirect: "/" }),
+    (req, res) => {
+        req.session.user = req.session.passport?.user;
+        if (req.session.user.remember)
+            req.session.cookie.maxAge = 2 * 24 * 60 * 60 * 1000;
+        res.redirect("/product/all");
+    }
+);
 
 app.use('/page', require('./routes/page'));
 app.use('/product', require('./routes/product'));
