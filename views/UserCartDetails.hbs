@@ -28,6 +28,7 @@
                             </thead>
                             <tbody id="orderSummary">
                                 <!-- Products will be populated here -->
+                                {{#if cartItems.length}}
                                 {{#each cartItems}}
                                 <tr data-id="{{this._id}}">
                                     <td>{{this.name}}</td>
@@ -35,9 +36,15 @@
                                     <td>{{this.price}}</td>
                                     <td class="checkbox-center"><input type="checkbox" class="product-checkbox"
                                             data-id="{{this._id}}" data-price="{{this.price}}"></td>
-                                    <td class="checkbox-center"><button type="button" class="btn btn-danger btn-sm remove-item">Xóa</button></td>
+                                    <td class="checkbox-center"><button type="button"
+                                            class="btn btn-danger btn-sm remove-item">Xóa</button></td>
                                 </tr>
                                 {{/each}}
+                                {{else}}
+                                <tr>
+                                    <td colspan="5" class="text-center">Chưa có sản phẩm nào</td>
+                                </tr>
+                                {{/if}}
                             </tbody>
                         </table>
                         <h4 class="fw-bold">Total: <span id="totalPrice"></span>đ</h4>
@@ -89,6 +96,20 @@
 
 <script>
     $(document).ready(function () {
+
+        function updateConfirmButtonState() {
+            const confirmButton = $('#paymentForm button[type="submit"]');
+            const hasCheckedItems = $('#orderSummary .product-checkbox:checked').length > 0; // Kiểm tra có sản phẩm nào được chọn không
+            const hasCartItems = $('#orderSummary tr').length > 0; // Kiểm tra giỏ hàng có sản phẩm không
+
+            // Vô hiệu hóa nút nếu không có sản phẩm hoặc không có sản phẩm được chọn
+            if (!hasCheckedItems || !hasCartItems) {
+                confirmButton.prop('disabled', true);
+            } else {
+                confirmButton.prop('disabled', false);
+            }
+        }
+
         // Function to populate order summary dynamically
         function populateOrderSummary() {
             let totalPrice = 0;
@@ -105,6 +126,7 @@
 
             // Cập nhật tổng giá trị
             $('#totalPrice').text(totalPrice);
+            updateConfirmButtonState();
         }
 
         // Event listener for checkbox change
