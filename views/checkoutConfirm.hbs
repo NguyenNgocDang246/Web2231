@@ -1,0 +1,110 @@
+{{> Nav}}
+
+<section class="py-5">
+    <div class="container">
+        <h1 class="text-center mb-4">Checkout Confirmation</h1>
+
+        <!-- Hiển thị thông tin đơn hàng -->
+        <div class="card">
+            <div class="card-body">
+                <h2>Order Details</h2>
+                <ul class="list-group mb-3">
+                    <li class="list-group-item"><strong>Receiver:</strong> {{order.receiverName}}</li>
+                    <li class="list-group-item"><strong>Address:</strong> {{order.shippingAddress}}</li>
+                    <li class="list-group-item"><strong>Payment Method:</strong> {{order.paymentMethod}}</li>
+                    <li class="list-group-item"><strong>Insurance:</strong> {{order.insurance}}</li>
+                    <li class="list-group-item"><strong>Total Amount:</strong> {{order.totalAmount}}đ</li>
+                </ul>
+            </div>
+        </div>
+       {{#if isPaymentOnline}}
+            <div class="text-center mt-4">
+                <!-- Nút Confirm -->
+                <form id="checkoutForm">
+                    <input type="hidden" id="orderID" value="{{order._id}}">
+                    <button type="submit" class="btn btn-success btn-lg">Confirm</button>
+                </form>
+            </div>
+
+            <div class="text-center mt-3">
+                <!-- Nút Cancel -->
+                <form action="/checkout/confirm" method="POST">
+                    <input type="hidden" name="isCancel" value="true">
+                    <input type="hidden" name="orderID" value="{{order._id}}">
+                    <input type="hidden" name="token" value="wrong">
+                    <button type="submit" class="btn btn-danger btn-lg">Cancel</button>
+                </form>
+            </div>
+        {{else}}
+            <div class="text-center mt-4">
+                <div class="alert alert-success">Cảm ơn bạn đã mua hàng!</div>
+            </div>
+        {{/if}}
+
+    </div>
+</section>
+
+{{> Footer}}
+
+<script>
+    $(document).ready(function () {
+        let token = '';
+
+        // Kiểm tra isPaymentOnline trước khi gọi API lấy token
+        if ( {{ isPaymentOnline }} ) 
+        {
+            // Fetch token khi trang được tải
+            $.ajax({
+                url: '/checkout/getToken', // Gọi API để lấy token
+                type: 'GET',
+                success: function (response) {
+                    if (response.success) {
+                        token = response.token; // Lưu token vào biến
+                    } else {
+                        alert('Failed to retrieve token. Please try again.');
+                    }
+                },
+                error: function (error) {
+                    console.error('Error fetching token:', error);
+                }
+            });
+
+            $("#checkoutForm").submit(function (event) {
+                event.preventDefault(); // Ngăn gửi form mặc định
+
+                const orderID = $("#orderID").val();
+
+                if (!token) {
+                    alert('Token not available. Please try again.');
+                    return;
+                }
+
+                const confirmButton = $('#checkoutForm button[type="submit"]');
+                confirmButton.prop('disabled', true).text('Processing...');
+
+                // Chuẩn bị dữ liệu gửi
+                const data = { token, orderID };
+
+                // Gửi AJAX request để xác nhận
+                $.ajax({
+                    url: '/checkout/confirm',
+                    type: 'POST',
+                    data: data, // Gửi dữ liệu dưới dạng JSON
+                    success: function (response) {
+                        confirmButton.prop('disabled', false).text('Confirm');
+                        if (response.success) {
+                            alert('Thank you for your purchase! Your order has been confirmed.');
+                            window.location.href = '/user/cart_details'; // Chuyển hướng sau khi xác nhận thành công
+                        } else {
+                            alert('Failed to confirm your order. Please try again.');
+                        }
+                    },
+                    error: function (error) {
+                        console.error('Error:', error);
+                        alert('Failed to confirm your order. Please try again.');
+                    }
+                });
+            });
+        }  
+    });
+</script>
