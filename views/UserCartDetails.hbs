@@ -60,8 +60,8 @@
                         <form id="paymentForm">
                             <!-- Name -->
                             <div class="mb-3">
-                                <label for="fullName" class="form-label">Full Name</label>
-                                <input type="text" class="form-control" id="fullName" required>
+                                <label for="receiverName" class="form-label">Receiver 's Name</label>
+                                <input type="text" class="form-control" id="receiverName" required>
                             </div>
                             <!-- Address -->
                             <div class="mb-3">
@@ -72,8 +72,8 @@
                             <div class="mb-3">
                                 <label for="paymentMethod" class="form-label">Payment Method</label>
                                 <select class="form-select" id="paymentMethod" required>
-                                    <option value="creditCard">Online banking</option>
-                                    <option value="paypal">Cash payment</option>
+                                    <option value="online">Online payment</option>
+                                    <option value="cash">Cash payment</option>
                                 </select>
                             </div>
                             <div class="mb-3">
@@ -163,34 +163,41 @@
             $('#orderSummary tr').each(function () {
                 const checkbox = $(this).find('.product-checkbox');
                 if (checkbox.prop('checked')) {
-                    const productId = checkbox.data('id');
+                    const product = checkbox.data('id');
                     const quantity = parseInt($(this).find('td:nth-child(2)').text());
                     const price = parseFloat(checkbox.data('price'));
 
-                    selectedItems.push({ productId, quantity, price });
+                    selectedItems.push({ product, quantity });
                 }
             });
 
             // Lấy thông tin thanh toán từ form
-            const fullName = $('#fullName').val();
+            const receiverName = $('#receiverName').val();
             const address = $('#address').val();
             const paymentMethod = $('#paymentMethod').val();
-            const insurance = $('#insuranceCheckbox').prop('checked') ? true : false;
+            const insurance = $('#insuranceCheckbox').prop('checked') ? 'yes' : 'no';
+            const totalAmount = $('#totalPrice').text();
+
+            const data = {
+                selectedItems: selectedItems,
+                receiverName: receiverName,
+                address: address,
+                paymentMethod: paymentMethod,
+                insurance: insurance,
+                totalAmount: totalAmount
+            };
 
             // Gửi dữ liệu thanh toán và giỏ hàng đã chọn tới server
             $.ajax({
-                url: '/checkout/confirm',  // URL xử lý thanh toán
+                url: '/checkout/request',  // URL xử lý thanh toán
                 method: 'POST',
-                data: {
-                    selectedItems: selectedItems,
-                    fullName: fullName,
-                    address: address,
-                    paymentMethod: paymentMethod,
-                    insurance: insurance
-                },
+                data: data,
                 success: function (response) {
                     alert('Thank you for your purchase! Your order has been confirmed.');
-                    // Redirect hoặc xử lý kết quả
+                    const href = response.href;
+                    const orderID = response.orderID;
+                    const isPaymentOnline = response.isPaymentOnline;
+                    window.location.href = href + '?orderID=' + orderID + '&isPaymentOnline=' + isPaymentOnline;
                 },
                 error: function () {
                     alert('Failed to confirm purchase.');

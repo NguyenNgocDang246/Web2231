@@ -41,6 +41,10 @@ hbs.handlebars.registerHelper('index', function (array, index) {
     return null;  // Trả về null nếu mảng rỗng hoặc không phải là mảng
 });
 
+hbs.handlebars.registerHelper('json', function(context) {
+    return JSON.stringify(context);
+});
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -80,6 +84,7 @@ app.use('/page', require('./routes/page'));
 app.use('/product', require('./routes/product'));
 app.use('/user', require('./routes/user'));
 app.use('/cart', require('./routes/cart'));
+app.use('/checkout', require('./routes/checkout'));
 
 const { connectDB } = require('./models/db');
 
