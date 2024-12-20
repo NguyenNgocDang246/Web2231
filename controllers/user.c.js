@@ -4,7 +4,7 @@ const productModel = require('../models/product.m');
 
 module.exports = ({
     cartDetails: async (req, res) => {
-        const username = req.session.user.username;
+        const username = req.user.username;
         const user = await userModel.findOne({username: username});
 
         const cart = await cartModel.findOne({user: user._id});

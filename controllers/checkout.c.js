@@ -5,7 +5,7 @@ const { model } = require('mongoose');
 
 module.exports = ({
     request: async (req, res) => {
-        const username = req.session.user.username;
+        const username = req.user.username;
         const user = await userModel.findOne({ username: username });
 
         if (!req.body.selectedItems || !req.body.receiverName || !req.body.address) {
@@ -58,7 +58,7 @@ module.exports = ({
     },
     confirm: async (req, res) => {
 
-        const username = req.session.user.username;
+        const username = req.user.username;
         const user = await userModel.findOne({ username: username });
 
         const isCancel = req.body.isCancel;
