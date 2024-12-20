@@ -1,10 +1,8 @@
 require('dotenv').config();
 
-const { create } = require('express-handlebars');
 const express = require('express');
-const session = require('express-session');
 const path = require('path');
-const passport = require('./auth');
+const session = require('express-session');
 
 const PORT = process.env.PORT || 3000
 
@@ -21,70 +19,20 @@ app.use(session({
     cookie: { secure: false }
 }));
 
+require('./configs/server_config')(app);
 
-const hbs = create({
-    extname: '.hbs',
-    encoding: 'utf-8',
-    layoutsDir: './views/layouts',
-    partialsDir: './views/partials',
-    defaultLayout: 'main'
-})
+app.use(require('./middlewares/checkAuth.mw'));
 
-hbs.handlebars.registerHelper('eq', function (a, b) {
-    return a === b;
-});
+app.use('/auth/google', require('./routes/ggAuth.r'));
+app.use('/page', require('./routes/page.r'));
+app.use('/product', require('./routes/product.r'));
+app.use('/user', require('./routes/user.r'));
+app.use('/cart', require('./routes/cart.r'));
+app.use('/checkout', require('./routes/checkout.r'));
 
-hbs.handlebars.registerHelper('index', function (array, index) {
-    if (Array.isArray(array) && array.length > 0) {
-        return array[index];
-    }
-    return null;  // Trả về null nếu mảng rỗng hoặc không phải là mảng
-});
-
-hbs.handlebars.registerHelper('json', function(context) {
-    return JSON.stringify(context);
-});
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-const authMiddleware = (req, res, next) => {
-    const openRoutes = ['/page/login', '/page/register', '/auth/google', '/auth/google/callback'];
-    if (openRoutes.includes(req.path)) {
-        return next();
-    }
-    if (req.session.user) {
-        if (req.session.user.remember)
-            req.session.cookie.maxAge = 2 * 24 * 60 * 60 * 1000;
-        return next();
-    }
-    res.redirect('/page/login');
-}
-app.use(authMiddleware);
-
-app.engine('hbs', hbs.engine);
-app.set('view engine', 'hbs');
-app.set('views', './views');
-
-app.get("/auth/google",
-    passport.authenticate("google", { scope: ["profile", "email"] })
-);
-
-app.get("/auth/google/callback",
-    passport.authenticate("google", { failureRedirect: "/" }),
-    (req, res) => {
-        req.session.user = req.session.passport?.user;
-        if (req.session.user.remember)
-            req.session.cookie.maxAge = 2 * 24 * 60 * 60 * 1000;
-        res.redirect("/product/all");
-    }
-);
-
-app.use('/page', require('./routes/page'));
-app.use('/product', require('./routes/product'));
-app.use('/user', require('./routes/user'));
-app.use('/cart', require('./routes/cart'));
-app.use('/checkout', require('./routes/checkout'));
+// router error để cuối
+app.use(require('./middlewares/handle404Error.mw'));
+app.use(require('./middlewares/handleError.mw'));
 
 const { connectDB } = require('./models/db');
 

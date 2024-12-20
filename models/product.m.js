@@ -33,12 +33,17 @@ module.exports = ({
     one: async (id) => {
         try
         {
+            if(!mongoose.Types.ObjectId.isValid(id))
+                throw new Error('Invalid product id');
+
             const product = await Product.findById(id).lean();
+
+            if(!product) throw new Error('Product not found');
             return product;
         }
         catch(e)
         {
-            console.error('Error:', e);
+            throw(e);
         }
         
     },
