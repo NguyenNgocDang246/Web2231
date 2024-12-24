@@ -193,11 +193,19 @@
                 method: 'POST',
                 data: data,
                 success: function (response) {
-                    alert('Thank you for your purchase! Your order has been confirmed.');
-                    const href = response.href;
-                    const orderID = response.orderID;
-                    const isPaymentOnline = response.isPaymentOnline;
-                    window.location.href = href + '?orderID=' + orderID + '&isPaymentOnline=' + isPaymentOnline;
+                    if(response.href)
+                    {
+                        alert('Thank you for your purchase! Your order has been confirmed.');
+                        const href = response.href;
+                        const orderID = response.orderID;
+                        const isPaymentOnline = response.isPaymentOnline;
+                        window.location.href = href + '?orderID=' + orderID + '&isPaymentOnline=' + isPaymentOnline;
+                    }
+                    else
+                    {
+                        alert('You need to login to confirm your order.');
+                        window.location.href = '/page/login';
+                    } 
                 },
                 error: function () {
                     alert('Failed to confirm purchase.');

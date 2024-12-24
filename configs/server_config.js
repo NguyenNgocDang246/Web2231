@@ -23,11 +23,11 @@ module.exports = (app) => {
             const user = await userModel.findOne({username: username});
             if (user) {
                 if (!verifyPassword(password, user.password)) {
-                    return done(null, false, { message: 'Xác thực thất bại' });
+                    return done(null, null, { message: 'Xác thực thất bại' });
                 }
                 return done(null, user);
             } else {
-                return done(null, false, { message: 'Xác thực thất bại' });
+                return done(null, null, { message: 'Xác thực thất bại' });
             }
         } catch (e) {
             return done(e);

@@ -5,6 +5,25 @@ const orderModel = require('../models/order.m');
 
 module.exports = ({
     cartDetails: async (req, res) => {
+        if(req.session.user?.type === 'guest') {
+            if(req.session.user.cart.length === 0) {
+                return res.render('UserCartDetails', { cartItems: [] });
+            }
+            const products = await productModel.all();
+            const cartItems = req.session.user.cart.map(item => {
+                const product = products.find(product => product._id.toString() === item.product.toString());
+                if (product) {
+                    return {
+                        quantity: item.quantity,
+                        name: product.name,
+                        price: product.price,
+                        _id: product._id
+                    };
+                }
+                return item;
+            });
+            return res.render('UserCartDetails', { cartItems });
+        }
         const username = req.user.username;
         const user = await userModel.findOne({username: username});
 
@@ -67,5 +86,22 @@ module.exports = ({
         await userModel.update({_id: user._id}, {name: name, email: email, dob: new Date(dob), phone: phone});
         
         res.send({success: true});
-    }
+    },
+    changePassword: async (req, res) => {
+        const {currentPassword, newPassword} = req.body;
+        console.log(currentPassword, newPassword);
+        const {hashPassword, verifyPassword} = require('../configs/crypto_config');
+        const hashcurrentPw = hashPassword(currentPassword);
+        const user = req.user;
+        if(verifyPassword(currentPassword, user.password))
+        {
+            const hashNewPw = hashPassword(newPassword);
+            await userModel.update({_id: user._id}, {password: hashNewPw});
+        }    
+        else 
+            return res.status(400).send({message: "wrong password"});
+
+        res.send({success: true});
+    },
+
 })

@@ -91,12 +91,14 @@
         <!-- Confirm Password -->
         <div class="mb-3">
             <label for="confirmPassword" class="form-label">Confirm Password</label>
-            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm your password" required>
+            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm your password"
+                required>
             <div id="error-message" class="error" style="display: none;">Passwords do not match!</div>
         </div>
 
         <!-- Duplicate User Error -->
-        <div id="duplicateError" class="error" style="display: none;">User already exists. Please try again with a different username or email.</div>
+        <div id="duplicateError" class="error" style="display: none;">User already exists. Please try again with a
+            different username or email.</div>
 
         <!-- Register Button -->
         <button type="submit" class="btn btn-custom w-100">Register</button>
@@ -111,53 +113,85 @@
 {{> Footer}}
 
 <script>
-    $(document).ready(function() {
-        $('#registerForm').on('submit', function(event) {
-            event.preventDefault();  // Ngừng gửi form
+    $(document).ready(function () {
+        $('#registerForm').on('submit', function (event) {
+            event.preventDefault(); // Ngừng gửi form
 
             const password = $('#password').val();
             const confirmPassword = $('#confirmPassword').val();
+            const email = $('#email').val();
+            const phone = $('#phone').val();
+            const fullName = $('#fullName').val();
+            const username = $('#username').val();
+            const dob = $('#dob').val();
+
             const errorMessage = $('#error-message');
             const duplicateError = $('#duplicateError');
 
-            // Kiểm tra mật khẩu và confirm mật khẩu
+            let hasError = false;
+
+            // Xóa các thông báo lỗi cũ
+            errorMessage.hide();
+            duplicateError.hide();
+            $('.error').remove();
+
+            if (!phone || !/^\d{10,15}$/.test(phone)) {
+                $('#phone').after('<div class="error">Please enter a valid phone number (10-15 digits).</div>');
+                hasError = true;
+            }
+
+            if (!username.trim() || !/^[a-zA-Z0-9]{6,20}$/.test(username)) {
+                $('#username').after('<div class="error">Username must be 6-20 characters long and contain only letters or numbers.</div>');
+                hasError = true;
+            }
+
+            if (!password || password.length < 6 || password.length > 20) {
+                $('#password').after('<div class="error">Password must be 6-20 characters long.</div>');
+                hasError = true;
+            }
+
+
+            if (!password || password.length < 6) {
+                $('#password').after('<div class="error">Password must be at least 6 characters long.</div>');
+                hasError = true;
+            }
+
             if (password !== confirmPassword) {
-                // Hiển thị thông báo lỗi mật khẩu không khớp
-                errorMessage.show();
+                $('#confirmPassword').after('<div class="error">Passwords do not match.</div>');
+                hasError = true;
+            }
+
+            // Nếu có lỗi, dừng form lại
+            if (hasError) {
                 return;
-            } else {
-                // Ẩn thông báo lỗi mật khẩu không khớp
-                errorMessage.hide();
             }
 
             // Gửi dữ liệu đăng ký tới backend (AJAX)
             const userData = {
-                username: $('#username').val(),
+                username: username.trim(),
                 password: password,
-                name: $('#fullName').val(),
-                dob: $('#dob').val(),
-                email: $('#email').val(),
-                phone: $('#phone').val()
+                name: fullName.trim(),
+                dob: dob,
+                email: email.trim(),
+                phone: phone.trim()
             };
 
             $.ajax({
-                url: '/page/register',  // URL của API đăng ký
+                url: '/page/register', // URL của API đăng ký
                 method: 'POST',
                 data: userData,
-                success: function(response) {
+                success: function (response) {
                     // Thành công (có thể chuyển hướng đến trang khác)
                     alert('User registered successfully!');
-                    window.location.href = '/page/login';  // Redirect tới trang đăng nhập
+                    window.location.href = '/page/login'; // Redirect tới trang đăng nhập
                 },
-                error: function(xhr) {
+                error: function (xhr) {
                     // Nếu có lỗi từ backend (duplicate user)
                     if (xhr.status === 400 && xhr.responseJSON && xhr.responseJSON.message === 'duplicate_email') {
                         duplicateError.text('Email already exists. Please try again with a different email.').show();
-                    } 
-                    else if (xhr.status === 400 && xhr.responseJSON && xhr.responseJSON.message === 'duplicate_user') {
+                    } else if (xhr.status === 400 && xhr.responseJSON && xhr.responseJSON.message === 'duplicate_user') {
                         duplicateError.text('Username already exists. Please try again with a different username.').show();
-                    } 
-                    else {
+                    } else {
                         duplicateError.text('An error occurred during registration. Please try again.').show();
                     }
                 }

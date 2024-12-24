@@ -22,12 +22,12 @@ connectDB().then(() => {
             client: sessionDbConnection.getClient(), // Sử dụng connection cho session
             collectionName: 'sessions' // Tên collection để lưu session
         }),
-        cookie: { secure: false }
+        cookie: { secure: false, cookie: { maxAge: 30 * 60 * 1000 } }
     }));
 
     require('./configs/server_config')(app);
 
-    app.use(require('./middlewares/checkAuth.mw'));
+    app.use(require('./middlewares/checkGuest.mw'));
 
     app.use('/auth/google', require('./routes/ggAuth.r'));
     app.use('/page', require('./routes/page.r'));
