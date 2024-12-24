@@ -25,10 +25,15 @@ module.exports = ({
     },
     register: async (req, res) => {
         try {
-            let { username, password, name, email, dob } = req.body;
+            let { username, password, name, email, dob, phone } = req.body;
             const hasAcc = await userModel.findOne({ username: username });
             if (hasAcc) {
-                res.json({ message: 'duplicate user' });
+                res.status(400).json({ message: 'duplicate_user' });
+                return;
+            }
+            const duplicateEmail = await userModel.findOne({ email: email });
+            if (duplicateEmail) {
+                res.status(400).json({ message: 'duplicate_email' });
                 return;
             }
 
@@ -36,11 +41,12 @@ module.exports = ({
 
             const newUser = {
                 name: name,
-                dob: dob,
+                dob: new Date(dob),
                 email: email,
                 username: username,
                 password: password,
-                role: "normal_user"
+                role: "normal_user",
+                phone: phone
             };
 
             userModel.add(newUser);

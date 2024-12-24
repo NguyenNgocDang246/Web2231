@@ -70,6 +70,12 @@
             <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
         </div>
 
+        <!-- Phone Number -->
+        <div class="mb-3">
+            <label for="phone" class="form-label">Phone Number</label>
+            <input type="text" class="form-control" id="phone" placeholder="Enter your phone number" required>
+        </div>
+
         <!-- Username -->
         <div class="mb-3">
             <label for="username" class="form-label">Username</label>
@@ -130,7 +136,8 @@
                 password: password,
                 name: $('#fullName').val(),
                 dob: $('#dob').val(),
-                email: $('#email').val()
+                email: $('#email').val(),
+                phone: $('#phone').val()
             };
 
             $.ajax({
@@ -144,8 +151,14 @@
                 },
                 error: function(xhr) {
                     // Nếu có lỗi từ backend (duplicate user)
-                    if (xhr.status === 400 && xhr.responseText === 'duplicate user') {
-                        duplicateError.show();  // Hiển thị thông báo lỗi người dùng đã tồn tại
+                    if (xhr.status === 400 && xhr.responseJSON && xhr.responseJSON.message === 'duplicate_email') {
+                        duplicateError.text('Email already exists. Please try again with a different email.').show();
+                    } 
+                    else if (xhr.status === 400 && xhr.responseJSON && xhr.responseJSON.message === 'duplicate_user') {
+                        duplicateError.text('Username already exists. Please try again with a different username.').show();
+                    } 
+                    else {
+                        duplicateError.text('An error occurred during registration. Please try again.').show();
                     }
                 }
             });

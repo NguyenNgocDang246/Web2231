@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: String, default: 'normal_user' },
+    phone: { type: String, default: '0000000000' },
 });
 
 
@@ -78,5 +79,13 @@ module.exports = ({
             return null;
         }
     },
+    update: async (condition, updateData) => {
+        try {
+            await User.updateOne(condition, { $set: updateData }, { runValidators: true });
+        }
+        catch (e) {
+            next(e);
+        }
+    }
 })
 

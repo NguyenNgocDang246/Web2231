@@ -49,6 +49,7 @@ module.exports = (app) => {
                 username: profile.emails[0].value,
                 password: hashPassword(Math.random().toString(36).substring(2, 10)), // random mật khẩu
                 dob: new Date(),
+                phone: "0000000000",
                 role: "normal_user",
             };
     
