@@ -1,4 +1,5 @@
 const userModel = require('../models/user.m');
+const cartModel = require('../models/cart.m');
 const { hashPassword } = require('../configs/crypto_config');
 const passport = require('passport');
 
@@ -9,7 +10,11 @@ module.exports = ({
                 if (err || !user) {
                     return res.redirect('/page/login?fail=true');
                 }
-                req.logIn(user, (err) => {
+                const guestCart = req.session.user?.cart || [];
+                const returnTo = req.session.returnTo || '/product/all';
+                delete req.session.returnTo;
+
+                req.logIn(user, async (err) => {
                     if (err) {
                         return next(err);
                     }
@@ -18,7 +23,15 @@ module.exports = ({
                     } else {
                         req.session.cookie.expires = false;
                     }
-                    res.redirect('/product/all');
+                    if (guestCart.length > 0) {
+                        for (const guestItem of guestCart) {
+                            await cartModel.addItem(guestItem, user._id); // Thêm item vào giỏ hàng của user
+                        }
+                    }
+                    if(req.session.user)
+                        req.session.user.type = 'LogedIn';
+        
+                    res.redirect(returnTo);
                 });
             }
         )(req, res, next);
@@ -56,11 +69,19 @@ module.exports = ({
         }
     },
     logout: (req, res) => {
+        if (req.session.user) {
+            req.session.user = null;
+        }
         req.logout((err) => {
             if (err) {
                 return res.status(500).send("Có lỗi khi đăng xuất.");
             }
+            req.session.destroy((destroyErr) => {
+                if (destroyErr) {
+                    return res.status(500).send("Có lỗi xảy ra khi xóa session. Vui lòng thử lại.");
+                }
+            });
+            res.redirect('/page/login');
         });
-        res.redirect('/');
     }
 })

@@ -27,7 +27,7 @@ connectDB().then(() => {
 
     require('./configs/server_config')(app);
 
-    app.use(require('./middlewares/checkAuth.mw'));
+    app.use(require('./middlewares/checkGuest.mw'));
 
     app.use('/auth/google', require('./routes/ggAuth.r'));
     app.use('/page', require('./routes/page.r'));

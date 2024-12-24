@@ -5,6 +5,25 @@ const orderModel = require('../models/order.m');
 
 module.exports = ({
     cartDetails: async (req, res) => {
+        if(req.session.user?.type === 'guest') {
+            if(req.session.user.cart.length === 0) {
+                return res.render('UserCartDetails', { cartItems: [] });
+            }
+            const products = await productModel.all();
+            const cartItems = req.session.user.cart.map(item => {
+                const product = products.find(product => product._id.toString() === item.product.toString());
+                if (product) {
+                    return {
+                        quantity: item.quantity,
+                        name: product.name,
+                        price: product.price,
+                        _id: product._id
+                    };
+                }
+                return item;
+            });
+            return res.render('UserCartDetails', { cartItems });
+        }
         const username = req.user.username;
         const user = await userModel.findOne({username: username});
 
