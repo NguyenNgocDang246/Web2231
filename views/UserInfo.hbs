@@ -64,14 +64,13 @@
     }
 
     .change-password-btn {
-    background-color: #ffc107;
-    color: #fff;
+        background-color: #ffc107;
+        color: #fff;
     }
 
     .change-password-btn:hover {
         background-color: #e0a800;
     }
-
 </style>
 
 {{> Nav user=user}}
@@ -119,7 +118,8 @@
 </div>
 
 <!-- Modal for Changing Password -->
-<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -174,7 +174,7 @@
 
             // Gửi yêu cầu đổi mật khẩu tới server
             $.ajax({
-                url: '/user/change-password', // Đường dẫn API đổi mật khẩu
+                url: '/user/change_password', // Đường dẫn API đổi mật khẩu
                 method: 'POST',
                 data: {
                     currentPassword: currentPassword,
@@ -190,14 +190,17 @@
                     }
                 },
                 error: function (xhr) {
-                    alert('An error occurred while changing the password.');
-                    //console.error(xhr.responseText);
+                    if (xhr.status === 400 && xhr.responseJSON && xhr.responseJSON.message) {
+                        alert('Error: ' + xhr.responseJSON.message);
+                    } else {
+                        alert('An error occurred while changing the password.');
+                    }
                 }
             });
         });
 
         $('#profileForm').on('submit', function (event) {
-            event.preventDefault(); 
+            event.preventDefault();
 
             const name = $('#name').val();
             const email = $('#email').val();
@@ -207,9 +210,9 @@
 
             // Gửi yêu cầu cập nhật thông tin người dùng tới server
             $.ajax({
-                url: '/user/update_info', 
+                url: '/user/update_info',
                 method: 'POST',
-                data:{
+                data: {
                     name: name,
                     email: email,
                     phone: phone,

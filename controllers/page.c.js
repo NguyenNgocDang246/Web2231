@@ -7,7 +7,7 @@ module.exports = ({
         passport.authenticate('myPassportStrategy',
             (err, user, info) => {
                 if (err || !user) {
-                    res.redirect('/page/login?fail=true');
+                    return res.redirect('/page/login?fail=true');
                 }
                 req.logIn(user, (err) => {
                     if (err) {

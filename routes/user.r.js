@@ -6,5 +6,6 @@ router.get('/cart_details', userController.cartDetails);
 router.get('/order_details', userController.orderDetails);
 router.get('/user_info', userController.userInfo);
 router.post('/update_info', userController.userUpdate);
+router.post('/change_password', userController.changePassword);
 
 module.exports = router;

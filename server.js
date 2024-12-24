@@ -22,7 +22,7 @@ connectDB().then(() => {
             client: sessionDbConnection.getClient(), // Sử dụng connection cho session
             collectionName: 'sessions' // Tên collection để lưu session
         }),
-        cookie: { secure: false }
+        cookie: { secure: false, cookie: { maxAge: 30 * 60 * 1000 } }
     }));
 
     require('./configs/server_config')(app);

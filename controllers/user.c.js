@@ -67,5 +67,22 @@ module.exports = ({
         await userModel.update({_id: user._id}, {name: name, email: email, dob: new Date(dob), phone: phone});
         
         res.send({success: true});
-    }
+    },
+    changePassword: async (req, res) => {
+        const {currentPassword, newPassword} = req.body;
+        console.log(currentPassword, newPassword);
+        const {hashPassword, verifyPassword} = require('../configs/crypto_config');
+        const hashcurrentPw = hashPassword(currentPassword);
+        const user = req.user;
+        if(verifyPassword(currentPassword, user.password))
+        {
+            const hashNewPw = hashPassword(newPassword);
+            await userModel.update({_id: user._id}, {password: hashNewPw});
+        }    
+        else 
+            return res.status(400).send({message: "wrong password"});
+
+        res.send({success: true});
+    },
+
 })
