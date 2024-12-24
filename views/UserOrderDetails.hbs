@@ -10,18 +10,18 @@
     .order-status {
         font-size: 1.2rem;
         font-weight: bold;
-        color: #28a745;
-        /* Green for delivered */
     }
 
     .order-status.pending {
-        color: #ffc107;
-        /* Yellow for pending */
+        color: #ffc107; /* Yellow for pending */
     }
 
     .order-status.shipped {
-        color: #007bff;
-        /* Blue for shipped */
+        color: #007bff; /* Blue for shipped */
+    }
+
+    .order-status.delivered {
+        color: #28a745; /* Green for delivered */
     }
 </style>
 
@@ -34,94 +34,131 @@
         <ul class="nav nav-pills mb-3" id="orderTab" role="tablist">
             <li class="nav-item" role="presentation">
                 <a class="nav-link {{#if (eq type 'pending')}}active{{/if}}" id="pending-tab" data-bs-toggle="pill"
-                    href="#pending" role="tab" aria-controls="pending" aria-selected="true">Hàng đã đặt</a>
+                    href="#pending" role="tab" aria-controls="pending" aria-selected="true">Pending</a>
             </li>
             <li class="nav-item" role="presentation">
                 <a class="nav-link {{#if (eq type 'shipping')}}active{{/if}}" id="shipped-tab" data-bs-toggle="pill"
-                    href="#shipped" role="tab" aria-controls="shipped" aria-selected="false">Hàng đang giao</a>
+                    href="#shipped" role="tab" aria-controls="shipped" aria-selected="false">Shipping</a>
             </li>
             <li class="nav-item" role="presentation">
                 <a class="nav-link {{#if (eq type 'delivered')}}active{{/if}}" id="delivered-tab" data-bs-toggle="pill"
-                    href="#delivered" role="tab" aria-controls="delivered" aria-selected="false">Hàng đã nhận</a>
+                    href="#delivered" role="tab" aria-controls="delivered" aria-selected="false">Delivered</a>
             </li>
         </ul>
         <div class="tab-content" id="orderTabContent">
-            <!-- Hàng đã đặt -->
+            <!-- Pending Orders -->
             <div class="tab-pane fade {{#if (eq type 'pending')}}show active{{/if}}" id="pending" role="tabpanel"
                 aria-labelledby="pending-tab">
-                <div class="order-card">
-                    <h5>Order #1</h5>
-                    <p><strong>Product:</strong> T-Shirt</p>
-                    <p><strong>Price:</strong> $25.00</p>
-                    <p class="order-status pending">Hàng đã đặt - Chờ xử lý</p>
-                    <button class="btn btn-danger btn-sm cancel-order" data-id="{{this.id}}">Hủy đơn hàng</button>
+                {{#if pending_orders.length}}
+                {{#each pending_orders}}
+                <div class="card mb-3 shadow-sm order-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Order #{{this._id}}</h5>
+                        <ul class="list-group list-group-flush mb-3">
+                            {{#each this.items}}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><strong>{{this.name}}</strong></span>
+                                <span><strong>Quantity:</strong> {{this.quantity}}</span>
+                            </li>
+                            {{/each}}
+                        </ul>
+                        <p class="card-text"><strong>Total:</strong> <span
+                                class="text-primary">{{this.totalAmount}}đ</span></p>
+                        <p class="badge bg-warning text-dark order-status pending">Pending</p>
+                        {{!-- <div class="text-end">
+                            <button class="btn btn-danger btn-sm cancel-order" data-id="{{this._id}}">Cancel Order</button>
+                        </div> --}}
+                    </div>
                 </div>
-                <div class="order-card">
-                    <h5>Order #2</h5>
-                    <p><strong>Product:</strong> Jeans</p>
-                    <p><strong>Price:</strong> $40.00</p>
-                    <p class="order-status pending">Hàng đã đặt - Chờ xử lý</p>
-                    <button class="btn btn-danger btn-sm cancel-order" data-id="{{this.id}}">Hủy đơn hàng</button>
-                </div>
+                {{/each}}
+                {{else}}
+                <p class="text-center text-muted">No pending orders available.</p>
+                {{/if}}
             </div>
 
-            <!-- Hàng đang giao -->
+            <!-- Shipping Orders -->
             <div class="tab-pane fade {{#if (eq type 'shipping')}}show active{{/if}}" id="shipped" role="tabpanel"
                 aria-labelledby="shipped-tab">
-                <div class="order-card">
-                    <h5>Order #3</h5>
-                    <p><strong>Product:</strong> Sunglasses</p>
-                    <p><strong>Price:</strong> $15.00</p>
-                    <p class="order-status shipped">Hàng đang giao</p>
+                {{#if shipping_orders.length}}
+                {{#each shipping_orders}}
+                <div class="card mb-3 shadow-sm order-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Order #{{this._id}}</h5>
+                        <ul class="list-group list-group-flush mb-3">
+                            {{#each this.items}}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><strong>{{this.name}}</strong></span>
+                                <span><strong>Quantity:</strong> {{this.quantity}}</span>
+                            </li>
+                            {{/each}}
+                        </ul>
+                        <p class="card-text"><strong>Total:</strong> <span
+                                class="text-primary">{{this.totalAmount}}đ</span></p>
+                        <p class="badge bg-primary text-light order-status shipped">Shipping</p>
+                    </div>
                 </div>
+                {{/each}}
+                {{else}}
+                <p class="text-center text-muted">No orders are being shipped at the moment.</p>
+                {{/if}}
             </div>
 
-            <!-- Hàng đã nhận -->
+            <!-- Delivered Orders -->
             <div class="tab-pane fade {{#if (eq type 'delivered')}}show active{{/if}}" id="delivered" role="tabpanel"
                 aria-labelledby="delivered-tab">
-                <div class="order-card">
-                    <h5>Order #4</h5>
-                    <p><strong>Product:</strong> Sweater</p>
-                    <p><strong>Price:</strong> $50.00</p>
-                    <p class="order-status delivered">Hàng đã nhận</p>
+                {{#if delivered_orders.length}}
+                {{#each delivered_orders}}
+                <div class="card mb-3 shadow-sm order-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Order #{{this._id}}</h5>
+                        <ul class="list-group list-group-flush mb-3">
+                            {{#each this.items}}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><strong>{{this.name}}</strong></span>
+                                <span><strong>Quantity:</strong> {{this.quantity}}</span>
+                            </li>
+                            {{/each}}
+                        </ul>
+                        <p class="card-text"><strong>Total:</strong> <span
+                                class="text-primary">{{this.totalAmount}}đ</span></p>
+                        <p class="badge bg-success text-light order-status delivered">Delivered</p>
+                    </div>
                 </div>
-                <div class="order-card">
-                    <h5>Order #5</h5>
-                    <p><strong>Product:</strong> Jacket</p>
-                    <p><strong>Price:</strong> $75.00</p>
-                    <p class="order-status delivered">Hàng đã nhận</p>
-                </div>
+                {{/each}}
+                {{else}}
+                <p class="text-center text-muted">No delivered orders yet.</p>
+                {{/if}}
             </div>
         </div>
     </div>
 </section>
 
+{{> Footer}}
 <script>
     $(document).ready(function () {
-        // Lắng nghe sự kiện click trên các nút hủy đơn hàng
+        // Listen for cancel order button clicks
         $('.cancel-order').on('click', function () {
-            const orderId = $(this).data('id');  // Lấy ID đơn hàng từ thuộc tính data-id
+            const orderId = $(this).data('id'); // Get the order ID from the data-id attribute
 
-            // Gửi yêu cầu hủy đơn hàng tới server
+            // Send cancel order request to the server
             $.ajax({
-                url: `/order/cancel/${orderId}`,
+                url: `/order/cancel/id=${orderId}`,
                 type: 'DELETE',
                 contentType: 'application/json',
                 success: function (data) {
                     if (data.success) {
-                        alert('Hủy đơn hàng thành công!');
-                        // Cập nhật giao diện (ẩn đơn hàng bị hủy)
+                        alert('Order canceled successfully!');
+                        // Update UI (hide the canceled order)
                         $(this).closest('.order-card').remove();
                     } else {
-                        alert('Không thể hủy đơn hàng: ' + data.message);
+                        alert('Failed to cancel order: ' + data.message);
                     }
                 },
                 error: function (xhr, status, error) {
                     console.error('Error:', error);
-                    alert('Đã xảy ra lỗi khi hủy đơn hàng.');
+                    alert('An error occurred while canceling the order.');
                 }
             });
         });
     });
-
 </script>

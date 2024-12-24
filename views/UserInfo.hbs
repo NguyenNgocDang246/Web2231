@@ -63,12 +63,15 @@
         margin-bottom: 20px;
     }
 
-    footer {
-        background-color: #343a40;
-        color: #fff;
-        padding: 20px 0;
-        text-align: center;
+    .change-password-btn {
+    background-color: #ffc107;
+    color: #fff;
     }
+
+    .change-password-btn:hover {
+        background-color: #e0a800;
+    }
+
 </style>
 
 {{> Nav user=user}}
@@ -80,16 +83,16 @@
         <p>Edit your personal information below</p>
     </div>
 
-    <form>
+    <form id="profileForm">
         <!-- Full Name and Email -->
         <div class="row profile-info">
             <div class="col-md-6">
                 <label for="name">Full Name</label>
-                <input type="text" class="form-control" id="name" value="John Doe">
+                <input type="text" class="form-control" id="name" value="{{user.name}}">
             </div>
             <div class="col-md-6">
                 <label for="email">Email Address</label>
-                <input type="email" class="form-control" id="email" value="johndoe@example.com">
+                <input type="email" class="form-control" id="email" value="{{user.email}}">
             </div>
         </div>
 
@@ -97,30 +100,136 @@
         <div class="row profile-info">
             <div class="col-md-6">
                 <label for="phone">Phone Number</label>
-                <input type="text" class="form-control" id="phone" value="+1 234 567 890">
+                <input type="text" class="form-control" id="phone" value="{{user.phone}}">
             </div>
             <div class="col-md-6">
                 <label for="dob">Date of Birth</label>
-                <input type="date" class="form-control" id="dob" value="1990-01-01">
+                <input type="date" class="form-control" id="dob" value="{{user.dob}}">
             </div>
         </div>
 
-        <!-- Shipping Address -->
-        <div class="row profile-info">
-            <div class="col-md-12">
-                <label for="address">Shipping Address</label>
-                <input type="text" class="form-control" id="address" value="123 Main Street, New York, NY, 10001">
-            </div>
-        </div>
-
-        <!-- Save Button -->
+        <!-- Save and Change Password Buttons -->
         <div class="mt-4">
             <button type="submit" class="profile-btn">Save Changes</button>
+            <button type="button" class="profile-btn change-password-btn mt-3" onclick="openChangePasswordModal()">
+                Change Password
+            </button>
         </div>
     </form>
 </div>
 
+<!-- Modal for Changing Password -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="changePasswordForm">
+                    <div class="mb-3">
+                        <label for="currentPassword" class="form-label">Current Password</label>
+                        <input type="password" class="form-control" id="currentPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">New Password</label>
+                        <input type="password" class="form-control" id="newPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                        <input type="password" class="form-control" id="confirmPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Change Password</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <!-- Footer -->
-<footer>
-    <p>&copy; 2024 Clothing Shop. All Rights Reserved.</p>
-</footer>
+{{> Footer}}
+
+<script>
+    $(document).ready(function () {
+        // Hàm mở modal đổi mật khẩu
+        $('.change-password-btn').on('click', function () {
+            $('#changePasswordModal').modal('show'); // Hiển thị modal
+        });
+
+        // Xử lý sự kiện submit form đổi mật khẩu
+        $('#changePasswordForm').on('submit', function (event) {
+            event.preventDefault(); // Ngăn chặn reload trang
+
+            const currentPassword = $('#currentPassword').val();
+            const newPassword = $('#newPassword').val();
+            const confirmPassword = $('#confirmPassword').val();
+
+            // Kiểm tra xác nhận mật khẩu
+            if (newPassword !== confirmPassword) {
+                alert('New password and confirmation do not match!');
+                return;
+            }
+
+            // Gửi yêu cầu đổi mật khẩu tới server
+            $.ajax({
+                url: '/user/change-password', // Đường dẫn API đổi mật khẩu
+                method: 'POST',
+                data: {
+                    currentPassword: currentPassword,
+                    newPassword: newPassword
+                },
+                success: function (response) {
+                    if (response.success) {
+                        alert('Password changed successfully!');
+                        $('#changePasswordModal').modal('hide'); // Đóng modal
+                        $('#changePasswordForm')[0].reset(); // Xóa các input trong form
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function (xhr) {
+                    alert('An error occurred while changing the password.');
+                    //console.error(xhr.responseText);
+                }
+            });
+        });
+
+        $('#profileForm').on('submit', function (event) {
+            event.preventDefault(); 
+
+            const name = $('#name').val();
+            const email = $('#email').val();
+            const phone = $('#phone').val();
+            const dob = $('#dob').val();
+            console.log(name, email, phone, dob);
+
+            // Gửi yêu cầu cập nhật thông tin người dùng tới server
+            $.ajax({
+                url: '/user/update_info', 
+                method: 'POST',
+                data:{
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    dob: dob
+                },
+                success: function (response) {
+                    if (response.success) {
+                        alert('Profile updated successfully!');
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function (xhr) {
+                    if (xhr.status === 400 && xhr.responseJSON) {
+                        alert('Error: ' + xhr.responseJSON.message);
+                    } else {
+                        alert('An error occurred while updating the profile.');
+                    }
+                }
+            });
+        });
+    });
+</script>
