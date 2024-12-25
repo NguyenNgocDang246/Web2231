@@ -53,6 +53,11 @@ module.exports = ({
         }
 
     },
+    getTopProduct: async (req, res) => {
+        const newProducts = await productModel.newest(10);
+        const bestsellingProducts = await productModel.bestselling(10); 
+        res.render('topProducts', {newProducts, bestsellingProducts});
+    },
     api: async (req, res) => {
         const { minPrice, maxPrice, category, sortBy, searchQuery, page } = req.query;
 

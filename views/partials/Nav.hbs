@@ -17,9 +17,18 @@
 </style>
 <header id="nav-user" class="bg-dark text-white py-3">
     <div class="container d-flex justify-content-between align-items-center">
-        <a href="/product/all">
-            <h1 class="m-0">Clothing Shop</h1>
-        </a>
+       <div class="d-flex align-items-center">
+            <a href="/product/all">
+                <h1 class="m-0">Clothing Shop</h1>
+            </a>
+            <!-- Top Products Link -->
+            <a href="/product/topProducts" class="d-flex align-items-center ms-4 border-bottom" >
+                <i class="fa fa-trophy"></i>
+                <div class="fs-5 ms-2">Top Products</div>
+            </a>
+            
+        </div>
+
         <div class="d-flex align-items-center">
             <!-- Giỏ hàng -->
             <a href="/user/cart_details" class="btn btn-outline-light position-relative" id="cart">
@@ -33,14 +42,14 @@
                     data-bs-toggle="dropdown" aria-expanded="false">
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuButton">
-                    <li><a class="dropdown-item" href="/user/order_details?type=pending">Hàng đã đặt</a></li>
-                    <li><a class="dropdown-item" href="/user/order_details?type=shipping">Hàng đang giao</a></li>
-                    <li><a class="dropdown-item" href="/user/order_details?type=delivered">Hàng đã nhận</a></li>
+                    <li><a class="dropdown-item" href="/user/order_details?type=pending">Pending Orders</a></li>
+                    <li><a class="dropdown-item" href="/user/order_details?type=shipping">Shipping Orders</a></li>
+                    <li><a class="dropdown-item" href="/user/order_details?type=delivered">Delivered Order</a></li>
                     <li>
                         <hr class="dropdown-divider">
                     </li>
-                    <li><a class="dropdown-item" href="/user/user_info">Thông tin tài khoản</a></li>
-                    <li><a class="dropdown-item" href="/page/logout">Đăng xuất</a></li>
+                    <li><a class="dropdown-item" href="/user/user_info">Account Information</a></li>
+                    <li><a class="dropdown-item" href="/page/logout">Logout</a></li>
                 </ul>
             </div>
         </div>
@@ -49,9 +58,17 @@
 
 <header id="nav-guest" class="bg-dark text-white py-3">
     <div class="container d-flex justify-content-between align-items-center">
-        <a href="/product/all">
-            <h1 class="m-0">Clothing Shop</h1>
-        </a>
+        <div class="d-flex align-items-center">
+            <a href="/product/all">
+                <h1 class="m-0">Clothing Shop</h1>
+            </a>
+            <!-- Top Products Link -->
+            <a href="/product/topProducts" class="d-flex align-items-center ms-4 border-bottom" >
+                <i class="fa fa-trophy"></i>
+                <div class="fs-5 ms-2">Top Products</div>
+            </a>
+            
+        </div>
         <div class="d-flex align-items-center">
             <!-- Giỏ hàng -->
             <a href="/user/cart_details" class="btn btn-outline-light position-relative" id="cart">

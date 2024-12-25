@@ -47,6 +47,39 @@ module.exports = ({
         }
         
     },
+    newest: async (limit) => {
+        try{
+            const products = await Product.find().sort({ createdAt: -1 }).limit(limit).lean();
+            return products;
+        }
+        catch(e)
+        {
+            throw(e);
+        }
+    },
+    bestselling: async (limit) => {
+        const orderModel = require('../models/order.m');  
+        try{
+            const orders = await orderModel.all();
+            const productQuantityMap = orders.reduce((map, order) => {
+                order.items.forEach(item => {
+                    map[item.product] = (map[item.product] || 0) + item.quantity;
+                });
+                return map;
+            }, {});
+            const sortedProductIds = Object.entries(productQuantityMap)
+                .sort((a, b) => b[1] - a[1])  
+                .slice(0, limit)
+                .map(entry => entry[0]);
+
+            const products = await Product.find({ _id: { $in: sortedProductIds } }).lean();
+            return products;
+        }
+        catch(e)
+        {
+            throw(e);
+        }
+    },
     find: async (condition = {}, page = 1, productPerPage = null, sort = {}) => {
         try {
             const skip = (page - 1) * productPerPage;
