@@ -29,6 +29,8 @@ connectDB().then(() => {
 
     app.use(require('./middlewares/checkGuest.mw'));
 
+    app.use('/api', require('./routes/api.r'));
+
     app.use('/auth/google', require('./routes/ggAuth.r'));
     app.use('/page', require('./routes/page.r'));
     app.use('/product', require('./routes/product.r'));

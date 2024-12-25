@@ -15,7 +15,7 @@
         filter: brightness(90%);
     }
 </style>
-<header class="bg-dark text-white py-3">
+<header id="nav-user" class="bg-dark text-white py-3">
     <div class="container d-flex justify-content-between align-items-center">
         <a href="/product/all">
             <h1 class="m-0">Clothing Shop</h1>
@@ -43,6 +43,24 @@
                     <li><a class="dropdown-item" href="/page/logout">Đăng xuất</a></li>
                 </ul>
             </div>
+        </div>
+    </div>
+</header>
+
+<header id="nav-guest" class="bg-dark text-white py-3">
+    <div class="container d-flex justify-content-between align-items-center">
+        <a href="/product/all">
+            <h1 class="m-0">Clothing Shop</h1>
+        </a>
+        <div class="d-flex align-items-center">
+            <!-- Giỏ hàng -->
+            <a href="/user/cart_details" class="btn btn-outline-light position-relative" id="cart">
+                <i class="bi bi-cart-fill"></i> Cart
+            </a>
+
+            <!-- Login và Register -->
+            <a href="/page/login" class="btn btn-outline-light ms-2" id="login">Login</a>
+            <a href="/page/register" class="btn btn-outline-light ms-2" id="register">Register</a>
         </div>
     </div>
 </header>
