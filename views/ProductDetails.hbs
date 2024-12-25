@@ -56,7 +56,7 @@
                         <button class="btn btn-outline-secondary" id="shareProductBtn">Share</button>
                     </div>
 
-                    
+
                 </div>
 
                 <!-- Horizontal Rule (divider) -->
@@ -79,6 +79,31 @@
                         </li>
                     </ul>
                 </div>
+            </div>
+        </div>
+
+        <!-- Related Products Section -->
+        <div class="mt-5">
+            <h3>Related Products</h3>
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {{#if relatedProducts.length}}
+                {{#each relatedProducts}}
+                <div class="col">
+                    <div class="card h-100" id="relatedProduct{{this._id}}">
+                        <img src="{{this.image}}" class="card-img-top" alt="{{this.name}}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{this.name}}</h5>
+                            <p class="card-text text-muted">Price: {{this.price}} đ</p>
+                            <a href="/product/id={{this._id}}" class="btn btn-primary">View Product</a>
+                        </div>
+                    </div>
+                </div>
+                {{/each}}
+                {{else}}
+                <div class="col">
+                    <p>No related products found.</p>
+                </div>
+                {{/if}}
             </div>
         </div>
 
@@ -182,6 +207,11 @@
                         comment: comment
                     },
                     success: function (response) {
+                        if (!response.comment) {
+                            alert('You need to login to comment.');
+                            window.location.href = '/page/login';
+                            return;
+                        }
                         const newComment = `
                         <div class="card my-3">
                             <div class="card-body">

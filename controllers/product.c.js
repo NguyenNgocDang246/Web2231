@@ -18,10 +18,18 @@ module.exports = ({
             const product = await productModel.one(id);
 
             const categoryNames = [];
+            const relatedProducts = [];
             for (const categoryId of product.category_id) {
                 const category = await categoryModel.one(categoryId);
                 if (category) {
                     categoryNames.push(category.name);
+
+                    const products = await productModel.find({ category_id: category._id });
+                    for (const relatedProduct of products) {
+                        if (relatedProduct._id.toString() !== product._id.toString()) {
+                            relatedProducts.push(relatedProduct);
+                        }
+                    }
                 }
             }
             product.categoryNames = categoryNames;
@@ -34,16 +42,21 @@ module.exports = ({
                 const user = await userModel.one(review.user);
                 review.userName = user.name;
             }
-
             res.render('ProductDetails', {
                 user: req.session.user,
                 product: product,
-                reviews: reviews
+                reviews: reviews,
+                relatedProducts: relatedProducts.slice(0, 3)
             });
         } catch (e) {
             next(e);
         }
 
+    },
+    getTopProduct: async (req, res) => {
+        const newProducts = await productModel.newest(10);
+        const bestsellingProducts = await productModel.bestselling(10); 
+        res.render('topProducts', {newProducts, bestsellingProducts});
     },
     api: async (req, res) => {
         const { minPrice, maxPrice, category, sortBy, searchQuery, page } = req.query;
@@ -80,8 +93,7 @@ module.exports = ({
     },
     addComment: async (req, res) => {
         const { rating, comment, productID } = req.body;
-        const username = req.session.user.username;
-        const user = await userModel.findOne({ username: username });
+        const user = req.user;
         // Logic thêm bình luận vào sản phẩm
         const newReview = {
             product: productID,
@@ -90,6 +102,6 @@ module.exports = ({
             comment: comment,
         };
         reviewModel.add(newReview);
-        res.json({ comment: { userName: username, rating, comment } });
+        res.json({ comment: { userName: user.username, rating, comment } });
     },
 })

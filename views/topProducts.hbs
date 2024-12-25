@@ -1,0 +1,183 @@
+{{> Nav}}
+<style>
+    .product-slider {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        margin: 20px 0;
+    }
+
+    .product-slide-track {
+        display: flex;
+    }
+
+    .product-slide {
+        flex: 0 0 25%; /* Hiển thị 4 sản phẩm trong một slide */
+        margin-right: 15px;
+        transition: transform 0.3s ease;
+    }
+
+    .card {
+        width: 100%;
+        border: none;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+        transform: scale(1.05);
+    }
+
+    .card-img-top {
+        height: 250px;
+        object-fit: cover;
+    }
+
+    .product-slider button {
+        background-color: rgba(255, 255, 255, 0.6);
+        padding: 12px;
+        font-size: 20px;
+        z-index: 10;
+        transition: background-color 0.3s ease;
+    }
+
+    .product-slider button:hover {
+        background-color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Hover effect on the slider */
+    .product-slide:hover {
+        transform: scale(1.02);
+    }
+
+    /* Responsive Layout */
+    @media (max-width: 768px) {
+        .product-slide {
+            flex: 0 0 50%; /* Hiển thị 2 sản phẩm trong một slide */
+        }
+    }
+
+    @media (max-width: 480px) {
+        .product-slide {
+            flex: 0 0 100%; /* Hiển thị 1 sản phẩm trong một slide */
+        }
+    }
+</style>
+
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Top Products</h2>
+
+        <div id="new" class="container my-5">
+            <h3>New Products</h3>
+            <div class="product-slider d-flex align-items-center justify-content-between">
+                <button id="newPrevBtn" class="btn text-black mx-2">
+                    <i class="fa-solid fa-angle-left"></i>
+                </button>
+
+                <div class="product-slide-track d-flex overflow-hidden">
+                    {{#each newProducts}}
+                    <div class="product-slide">
+                        <div class="card">
+                            <img src="{{this.image}}" class="card-img-top" alt="{{this.name}}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{this.name}}</h5>
+                                <p class="card-text text-muted">Price: {{this.price}} đ</p>
+                                <a href="/product/id={{this._id}}" class="btn btn-primary">View Product</a>
+                            </div>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+
+                <button id="newNextBtn" class="btn mx-2 text-black">
+                    <i class="fa-solid fa-angle-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="bestselling" class="container my-5">
+            <h3>Best Selling Products</h3>
+            <div class="product-slider d-flex align-items-center justify-content-between">
+                <button id="bestsellingPrevBtn" class="btn text-black mx-2">
+                    <i class="fa-solid fa-angle-left"></i>
+                </button>
+
+                <div class="product-slide-track d-flex overflow-hidden">
+                    {{#each bestsellingProducts}}
+                    <div class="product-slide">
+                        <div class="card">
+                            <img src="{{this.image}}" class="card-img-top" alt="{{this.name}}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{this.name}}</h5>
+                                <p class="card-text text-muted">Price: {{this.price}} đ</p>
+                                <a href="/product/id={{this._id}}" class="btn btn-primary">View Product</a>
+                            </div>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+
+                <button id="bestsellingNextBtn" class="btn mx-2 text-black">
+                    <i class="fa-solid fa-angle-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{> Footer}}
+
+<script>
+    $(document).ready(function() {
+        const slideWidth = $('.product-slide').outerWidth(true);
+        console.log(slideWidth);
+        const maxSlidesNew = {{newProducts.length}}- 4; 
+        const maxSlidesBestselling = {{bestsellingProducts.length}} - 4; 
+
+        let newIndex = 0;
+        let bestsellingIndex = 0;
+
+        // Hàm chuyển đổi slide sản phẩm mới
+        function moveNewSlide() {
+            $('#new .product-slide').css('transform', `translateX(-${newIndex * slideWidth}px)`);
+        }
+
+        // Hàm chuyển đổi slide sản phẩm bán chạy
+        function moveBestsellingSlide() {
+            $('#bestselling .product-slide').css('transform', `translateX(-${bestsellingIndex * slideWidth}px)`);
+        }
+
+        // Sự kiện cho nút "next" của sản phẩm mới
+        $('#newNextBtn').click(function() {
+            if (newIndex < maxSlidesNew) {
+                newIndex++;
+                moveNewSlide();
+            }
+        });
+
+        // Sự kiện cho nút "prev" của sản phẩm mới
+        $('#newPrevBtn').click(function() {
+            if (newIndex > 0) {
+                newIndex--;
+                moveNewSlide();
+            }
+        });
+
+        // Sự kiện cho nút "next" của sản phẩm bán chạy
+        $('#bestsellingNextBtn').click(function() {
+            if (bestsellingIndex < maxSlidesBestselling) {
+                bestsellingIndex++;
+                moveBestsellingSlide();
+            }
+        });
+
+        // Sự kiện cho nút "prev" của sản phẩm bán chạy
+        $('#bestsellingPrevBtn').click(function() {
+            if (bestsellingIndex > 0) {
+                bestsellingIndex--;
+                moveBestsellingSlide();
+            }
+        });
+    });
+</script>
