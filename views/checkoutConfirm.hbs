@@ -96,7 +96,9 @@
                             alert('Thank you for your purchase! Your order has been confirmed.');
                             window.location.href = '/user/cart_details'; // Chuyển hướng sau khi xác nhận thành công
                         } else {
-                            alert('Failed to confirm your order. Please try again.');
+                            if(response.message) alert(response.message);
+                            else alert('Failed to confirm your order. Please try again.');
+                            window.location.href = '/user/cart_details'; // Chuyển hướng sau khi xác nhận thất bại
                         }
                     },
                     error: function (error) {
