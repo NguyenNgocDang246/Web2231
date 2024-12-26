@@ -1,7 +1,7 @@
 const orderModel = require('../models/order.m');
 const userModel = require('../models/user.m');
 const cartModel = require('../models/cart.m');
-const { model } = require('mongoose');
+const connectPayment = require('./helper.c/connectPaymentServer.help.c');
 
 module.exports = ({
     request: async (req, res) => {
@@ -52,8 +52,9 @@ module.exports = ({
     },
     getToken: async (req, res) => {
         // logic gửi yêu cầu thanh toán qua hệ thống thanh toán
+        const token = await connectPayment.getAccessToken({id: req.user._id});
         // nhận về token thanh toán, gửi token qua client
-        const token = '123456789012345678901234567890';
+        // const token = '123456789012345678901234567890';
         res.json({ success: true, token });
     },
     confirm: async (req, res) => {
@@ -82,9 +83,10 @@ module.exports = ({
     
         const token = req.body.token;
         const order = await orderModel.findOne({_id: req.body.orderID}); // để lấy order.totalAmount
-        // gửi user_id, và token qua hệ thống thanh toán
+        // gửi token qua hệ thống thanh toán để xác nhận thanh toán
+        const message = await connectPayment.confirmPayment(token, {amount: order.totalAmount});
         // nhận kết quả
-        const result = true;
+        const result = message === 'success';
         if (result) {
             const orderID = req.body.orderID;
             await orderModel.update({_id: orderID}, {'paymentStatus': 'paid'});
@@ -102,7 +104,10 @@ module.exports = ({
                 }
             }
             await orderModel.delete({_id: req.body.orderID});
-            res.json({ success: false });
+            if(message === 'Not enough balance')
+                res.json({ success: false, message: "Your balance is not enough" });
+            else 
+                res.json({ success: false, message: "Payment failed" });
         }
 
     }

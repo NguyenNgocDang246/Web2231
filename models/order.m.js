@@ -16,6 +16,7 @@ const orderSchema = new mongoose.Schema({
     receiverName: { type: String, required: true },
     insurance: { type: String, required: true },
     paymentStatus: { type: String, default: 'pending' },
+    date: {type: Date, default: Date.now},
 });
 
 

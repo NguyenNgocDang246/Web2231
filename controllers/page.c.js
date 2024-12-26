@@ -62,7 +62,9 @@ module.exports = ({
                 phone: phone
             };
 
-            userModel.add(newUser);
+            await userModel.add(newUser);
+            const result = await userModel.findOne({ username: newUser.username });
+            await require('../controllers/helper.c/connectPaymentServer.help.c').createAcount(result._id);
             res.redirect('/page/login');
         } catch (e) {
             next(e);
