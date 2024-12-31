@@ -97,13 +97,34 @@
 
         <!-- Phone Number and Date of Birth -->
         <div class="row profile-info">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <label for="phone">Phone Number</label>
                 <input type="text" class="form-control" id="phone" value="{{user.phone}}">
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <label for="dob">Date of Birth</label>
                 <input type="date" class="form-control" id="dob" value="{{user.dob}}">
+            </div>
+            <div class="col-md-4">
+                <label for="role">Role</label>
+                <div class="d-flex justify-content-between align-items-center border p-2 rounded">
+                    <div>
+                        {{#if (eq user.role 'vip_user')}}VIP User
+                        {{else}}
+                            {{#if (eq user.role 'normal_user')}}Normal User
+                            {{else}}
+                                {{#if (eq user.role 'admin')}}Admin
+                                {{/if}}
+                            {{/if}}
+                        {{/if}}
+                    </div>
+                    {{#if (or (eq user.role 'vip_user') (eq user.role 'admin'))}}
+                    {{else}}
+                    <button type="button" id="upgradeVipBtn" class="btn btn-outline-warning btn-sm">
+                        <i class="fas fa-star"></i> Upgrade VIP
+                    </button>
+                    {{/if}}
+                </div>
             </div>
         </div>
 
@@ -147,6 +168,27 @@
     </div>
 </div>
 
+<!-- Modal for Upgrade Vip -->
+<!-- Modal for Update Vip -->
+<div class="modal fade" id="upgradeVipModal" tabindex="-1" aria-labelledby="upgradeVipModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="upgradeVipModalLabel">Confirm VIP Upgrade</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to upgrade to VIP?</p>
+                <p class="text-muted">Enjoy exclusive features and priority support with a VIP account.</p>
+                <p class="fw-bold">Cost: <span class="text-primary">10,000</span> VND</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmUpgradeVip">Yes, Upgrade</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Footer -->
 {{> Footer}}
@@ -234,5 +276,42 @@
                 }
             });
         });
+
+        let vipToken = '';
+
+        $('#upgradeVipBtn').on('click', function () {
+            $.ajax({
+                url: '/user/require_upgrade_vip',
+                method: 'GET',
+                success: function (response) {
+                    vipToken = response.vipToken;
+                },
+                error: function (xhr) {
+                    alert('An error occurred while checking VIP status.');
+                }
+            })
+            $('#upgradeVipModal').modal('show');
+        })
+
+        $('#confirmUpgradeVip').on('click', function () {
+            $.ajax({
+                url: '/user/confirm_upgrade_vip', 
+                method: 'POST',
+                data: { userId: '{{user._id}}', vipToken: vipToken },
+                success: function (response) {
+                    if (response.success) {
+                        alert('Successfully upgraded to VIP!');
+                        $('#upgradeVipModal').modal('hide');
+                        location.reload();
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function (xhr) {
+                    alert('An error occurred while upgrading to VIP.');
+                }
+            });
+        });
+
     });
 </script>
