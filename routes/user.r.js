@@ -8,4 +8,7 @@ router.get('/user_info', require('../middlewares/checkAuth.mw'), userController.
 router.post('/update_info', require('../middlewares/checkAuth.mw'), userController.userUpdate);
 router.post('/change_password', require('../middlewares/checkAuth.mw'), userController.changePassword);
 
+router.get('/require_upgrade_vip', userController.requireUpgradeVip);
+router.post('/confirm_upgrade_vip', userController.confirmUpgradeVip);
+
 module.exports = router;

@@ -13,6 +13,10 @@ hbs.handlebars.registerHelper('eq', function (a, b) {
     return a === b;
 });
 
+hbs.handlebars.registerHelper('or', function (a, b) {
+    return a || b;
+});
+
 hbs.handlebars.registerHelper('index', function (array, index) {
     if (Array.isArray(array) && array.length > 0) {
         return array[index];
