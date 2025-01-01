@@ -38,7 +38,7 @@
                     <h2 id="productName">{{product.name}}</h2>
                     <p class="text-muted" id="productCategory">Category:
                         {{#each product.categoryNames}}
-                        {{this}} {{#unless @last}}, {{/unless}}
+                        {{this}}{{#unless @last}}, {{/unless}}
                         {{/each}}
                     </p>
                     <p id="productDescription">
@@ -50,7 +50,7 @@
                         <!-- Add to Cart -->
                         <label for="quantity" class="me-2">Quantity:</label>
                         <input type="number" id="quantityInput" class="form-control w-25" value="1" min="1">
-                        <button class="btn btn-primary me-4" id="addToCartBtn">Add to Cart</button>
+                        <button class="btn btn-primary me-4 fw-bold" id="addToCartBtn">Add to Cart</button>
 
                         <!-- Share -->
                         <button class="btn btn-outline-secondary" id="shareProductBtn">Share</button>
