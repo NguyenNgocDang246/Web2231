@@ -84,7 +84,8 @@ module.exports = ({
             await User.updateOne(condition, { $set: updateData }, { runValidators: true });
         }
         catch (e) {
-            next(e);
+            console.log(e);
+            throw(e);
         }
     }
 })

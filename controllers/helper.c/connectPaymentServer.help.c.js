@@ -1,10 +1,15 @@
 const axios = require('axios');
+const https = require('https');
+
+const httpsAgent = new https.Agent({
+    rejectUnauthorized: true, 
+});
 
 module.exports = {
     getAccessToken: async (data) => {
         try {
 
-            const response = await axios.post('http://localhost:3002/payment/getAccessToken', data);
+            const response = await axios.post('http://localhost:3002/payment/getAccessToken', data, {httpsAgent});
             return response.data.accessToken;
             
         } catch (e) {
@@ -17,7 +22,8 @@ module.exports = {
             const response = await axios.post('http://localhost:3002/payment/transferMoney', data, {
                 headers: {
                     Authorization: `Bearer ${token}`
-                }
+                },
+                httpsAgent,
             });
             
             return response.data.message;
@@ -29,7 +35,7 @@ module.exports = {
     },
     createAcount: async (userId) => {
         try {
-            const response = await axios.post('http://localhost:3002/payment/createAccount', {userId:userId.toString()});
+            const response = await axios.post('http://localhost:3002/payment/createAccount', {userId:userId.toString()}, {httpsAgent});
             return response.status === 200;
         } catch(e)
         {

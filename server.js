@@ -44,8 +44,17 @@ connectDB().then(() => {
 
     // Kết nối thành công, bắt đầu server
     const PORT = process.env.PORT || 3000;
+    // const https = require('https');
+    // const fs = require('fs');
+    // const privateKey = fs.readFileSync('./sslkeys/key.pem', 'utf8');
+    // const certificate = fs.readFileSync('./sslkeys/cert.pem', 'utf8');
+    // const credentials = { key: privateKey, cert: certificate };
+    // const httpsServer = https.createServer(credentials, app);
+    // httpsServer.listen(PORT, () => {
+    //     console.log(`Server running at https://localhost:${PORT}`);
+    // });
     app.listen(PORT, () => {
-        console.log(`Server running at http://localhost:${PORT}`);
+        console.log(`Server running at https://localhost:${PORT}`);
     });
 });
 

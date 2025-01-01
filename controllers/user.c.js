@@ -2,6 +2,7 @@ const cartModel = require('../models/cart.m');
 const userModel = require('../models/user.m');
 const productModel = require('../models/product.m');
 const orderModel = require('../models/order.m');
+const connectPayment = require('./helper.c/connectPaymentServer.help.c');
 
 module.exports = ({
     cartDetails: async (req, res) => {
@@ -102,6 +103,19 @@ module.exports = ({
             return res.status(400).send({message: "wrong password"});
 
         res.send({success: true});
+    },
+
+    requireUpgradeVip: async (req, res) => {
+        const vipToken = await connectPayment.getAccessToken({id: req.user._id});
+        res.json({ success: true, vipToken });
+    },
+
+    confirmUpgradeVip: async(req, res) => {
+        const vipToken = req.body.vipToken;
+        const message = await connectPayment.confirmPayment(vipToken, {amount: 10000});
+        const result = message === 'success';
+        await userModel.update({_id: req.body.userId}, {role: 'vip_user'});
+        res.json({ success: result });
     },
 
 })
