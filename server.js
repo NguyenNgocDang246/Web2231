@@ -6,6 +6,8 @@ const MongoStore = require('connect-mongo');
 
 const app = express();
 
+app.set('trust proxy', 1); // Bật trust proxy
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -22,7 +24,7 @@ connectDB().then(() => {
             client: sessionDbConnection.getClient(), // Sử dụng connection cho session
             collectionName: 'sessions' // Tên collection để lưu session
         }),
-        cookie: { secure: false, cookie: { maxAge: 30 * 60 * 1000 } }
+        cookie: { secure: process.env.NODE_ENV === 'production', cookie: { maxAge: 30 * 60 * 1000 } }
     }));
 
     require('./configs/server_config')(app);
