@@ -5,11 +5,13 @@ const httpsAgent = new https.Agent({
     rejectUnauthorized: true, 
 });
 
+const link = 'https://web2231-admin.onrender.com/payment';
+
 module.exports = {
     getAccessToken: async (data) => {
         try {
 
-            const response = await axios.post('https://localhost:3002/payment/getAccessToken', data, {httpsAgent});
+            const response = await axios.post(`${link}/getAccessToken`, data, {httpsAgent});
             return response.data.accessToken;
             
         } catch (e) {
@@ -19,7 +21,7 @@ module.exports = {
     },
     confirmPayment: async (token, data) => {
         try {
-            const response = await axios.post('https://localhost:3002/payment/transferMoney', data, {
+            const response = await axios.post(`$${link}/transferMoney`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 },
@@ -35,7 +37,7 @@ module.exports = {
     },
     createAcount: async (userId) => {
         try {
-            const response = await axios.post('https://localhost:3002/payment/createAccount', {userId:userId.toString()}, {httpsAgent});
+            const response = await axios.post(`${link}/createAccount`, {userId:userId.toString()}, {httpsAgent});
             return response.status === 200;
         } catch(e)
         {
