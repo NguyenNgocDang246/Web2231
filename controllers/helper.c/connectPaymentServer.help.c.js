@@ -21,7 +21,7 @@ module.exports = {
     },
     confirmPayment: async (token, data) => {
         try {
-            const response = await axios.post(`$${link}/transferMoney`, data, {
+            const response = await axios.post(`${link}/transferMoney`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 },
