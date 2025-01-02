@@ -105,6 +105,8 @@
 
                     // Render new product data
                     response.products.forEach(product => {
+                        const formattedPrice = product.price.toLocaleString("vi-VN") + " đ"; 
+
                         $('#products').append(`
                             <div class="col-md-4">
                                 <a href="/product/id=${product._id}">
@@ -112,7 +114,7 @@
                                         <img src="${product.image[0]}" class="card-img-top" alt="${product.name}">
                                         <div class="card-body">
                                             <h5 class="card-title">${product.name}</h5>
-                                            <p class="card-text">${product.price} đ</p>
+                                            <p class="card-text">${formattedPrice}</p>
                                         </div>
                                     </div>
                                 </a>

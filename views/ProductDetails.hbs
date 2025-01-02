@@ -21,60 +21,129 @@
     .comment-text {
         margin: 5px 0 0;
     }
+
+
+    #productDescription {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    .list-group-item {
+        background-color: #f9f9f9;
+    }
+
+    .badge {
+        font-size: 0.85rem;
+    }
+
+    .btn {
+        transition: all 0.3s ease-in-out;
+    }
+
+    .btn:hover {
+        transform: scale(1.02);
+    }
+
+    .card {
+        border-radius: 15px;
+    }
+
+    .form-label {
+        font-weight: bold;
+        color: #495057;
+    }
+
+    .form-control, .form-select {
+        border-radius: 10px;
+        border: 1px solid #ced4da;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+
+    #commentInput::placeholder {
+        color: #6c757d;
+        font-style: italic;
+    }
+
+    .form-select option {
+        font-size: 1.1rem;
+    }
+
+    #cmt {
+        font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: medium;
+    }
+
 </style>
 
 <!-- Product Details Section -->
 <section class="py-5">
     <div class="container">
-        <div class="row g-4">
+        <div class="row g-4 align-items-center">
             <!-- Product Image -->
             <div class="col-md-6">
-                <img src="{{index product.image 0}}" alt="Product Image" class="img-fluid rounded">
+                <img src="{{index product.image 0}}" alt="Product Image" class="img-fluid rounded shadow-sm">
             </div>
 
             <!-- Product Info + Specifications -->
             <div class="col-md-6">
-                <div class="card-body">
-                    <h2 id="productName">{{product.name}}</h2>
-                    <p class="text-muted" id="productCategory">Category:
-                        {{#each product.categoryNames}}
-                        {{this}}{{#unless @last}}, {{/unless}}
-                        {{/each}}
-                    </p>
-                    <p id="productDescription">
-                        {{product.description}}
-                    </p>
-                    <h4 class="fw-bold"><span id="productPrice">{{product.price}} đ</span></h4>
+                <div class="card border-0">
+                    <div class="card-body">
+                        <!-- Product Name -->
+                        <h3 id="productName" class="card-title mb-3">{{product.name}}</h3>
 
-                    <div class="d-flex align-items-center justify-content-between">
-                        <!-- Add to Cart -->
-                        <label for="quantity" class="me-2">Quantity:</label>
-                        <input type="number" id="quantityInput" class="form-control w-25" value="1" min="1">
-                        <button class="btn btn-primary me-4 fw-bold" id="addToCartBtn">Add to Cart</button>
+                        <!-- Product Category -->
+                        <p id="productCategory" class="text-muted">
+                            <strong>Category:</strong>
+                            {{#each product.categoryNames}}
+                            <span class="badge bg-light text-dark me-1">{{this}}</span>
+                            {{/each}}
+                        </p>
 
-                        <!-- Share -->
-                        <button class="btn btn-outline-secondary" id="shareProductBtn">Share</button>
+                        <!-- Product Description -->
+                        <p id="productDescription" class="text-secondary mb-4">{{product.description}}</p>
+
+                        <!-- Product Price -->
+                        <h4 class="fw-bold"><span id="productPrice"></span></h4>
+
+                        <!-- Add to Cart & Share -->
+                        <div class="d-flex align-items-center mt-4">
+                            <label for="quantityInput" class="me-2">Quantity:</label>
+                            <input type="number" id="quantityInput" class="form-control w-25 me-3" value="1" min="1">
+                            <button class="btn btn-primary me-3" id="addToCartBtn">
+                                <i class="bi bi-cart-plus me-2"></i>Add to Cart
+                            </button>
+                            <button class="btn btn-outline-secondary" id="shareProductBtn">
+                                <i class="bi bi-share me-2"></i>Share
+                            </button>
+                        </div>
                     </div>
-
-
                 </div>
 
-                <!-- Horizontal Rule (divider) -->
+                <!-- Divider -->
                 <hr class="my-4">
 
                 <!-- Specifications Section -->
                 <div class="mt-4">
                     <h3>Specifications</h3>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Brand: {{product.brandNames}}</li>
-                        <li class="list-group-item">Available Sizes:
+                        <li class="list-group-item">
+                            <strong>Brand:</strong> {{product.brandNames}}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Available Sizes:</strong>
                             {{#each product.size}}
-                            {{this}} {{#unless @last}}, {{/unless}}
+                            <span class="badge bg-light text-dark me-1">{{this}}</span>
                             {{/each}}
                         </li>
-                        <li class="list-group-item">Color:
+                        <li class="list-group-item">
+                            <strong>Colors:</strong>
                             {{#each product.colors}}
-                            {{this}} {{#unless @last}}, {{/unless}}
+                            <span class="badge bg-light text-dark me-1">{{this}}</span>
                             {{/each}}
                         </li>
                     </ul>
@@ -82,9 +151,10 @@
             </div>
         </div>
 
+
         <!-- Related Products Section -->
         <div class="mt-5">
-            <h3>Related Products</h3>
+            <h4>Related Products</h4>
             <div class="row row-cols-1 row-cols-md-3 g-4">
                 {{#if relatedProducts.length}}
                 {{#each relatedProducts}}
@@ -93,7 +163,7 @@
                         <img src="{{this.image}}" class="card-img-top" alt="{{this.name}}">
                         <div class="card-body">
                             <h5 class="card-title">{{this.name}}</h5>
-                            <p class="card-text text-muted">Price: {{this.price}} đ</p>
+                            <p class="card-text text-muted relatedProductPrice">{{this.price}}</p>
                             <a href="/product/id={{this._id}}" class="btn btn-primary">View Product</a>
                         </div>
                     </div>
@@ -109,29 +179,40 @@
 
         <!-- Comments Section -->
         <div class="mt-5">
-            <h3>Comments</h3>
+            <h4>Comments</h4>
 
             <!-- Add Comment Form -->
-            <form id="commentForm" class="mb-4">
-                <div class="mb-3">
-                    <label for="ratingInput" class="form-label">Your Rating</label>
-                    <select id="ratingInput" class="form-select" required>
-                        <option value="" disabled selected>Select your rating</option>
-                        <option value="5">5 - Excellent</option>
-                        <option value="4">4 - Very Good</option>
-                        <option value="3">3 - Good</option>
-                        <option value="2">2 - Fair</option>
-                        <option value="1">1 - Poor</option>
-                    </select>
-                </div>
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-4" id="cmt">Please leave a comment, it would help us a lot</h5>
+                    <form id="commentForm">
+                        <!-- Rating Input -->
+                        <div class="mb-3">
+                            <label for="ratingInput" class="form-label">Your Rating</label>
+                            <select id="ratingInput" class="form-select" required>
+                                <option value="" disabled selected>Select your rating</option>
+                                <option value="5">⭐️⭐️⭐️⭐️⭐️ - Excellent</option>
+                                <option value="4">⭐️⭐️⭐️⭐️ - Very Good</option>
+                                <option value="3">⭐️⭐️⭐️ - Good</option>
+                                <option value="2">⭐️⭐️ - Fair</option>
+                                <option value="1">⭐️ - Poor</option>
+                            </select>
+                        </div>
 
-                <div class="mb-3">
-                    <textarea id="commentInput" class="form-control" rows="3" placeholder="Write your comment..."
-                        required></textarea>
-                </div>
+                        <!-- Comment Input -->
+                        <div class="mb-3">
+                            <label for="commentInput" class="form-label">Your Comment</label>
+                            <textarea id="commentInput" class="form-control form-control-lg" rows="4"
+                                placeholder="Write your comment here..." required></textarea>
+                        </div>
 
-                <button type="submit" class="btn btn-primary">Submit Comment</button>
-            </form>
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="bi bi-send-fill me-2"></i>Submit Comment
+                        </button>
+                    </form>
+                </div>
+            </div>
 
             <!-- Comments List -->
             <div id="commentsList">
@@ -235,6 +316,19 @@
                 alert('Please fill out both fields.');
             }
         });
+
+        const rawPrice = "{{product.price}}";
+        const formattedPrice = parseInt(rawPrice, 10).toLocaleString("vi-VN") + " đ";
+
+        $("#productPrice").text(formattedPrice);
+
+
+        $(".relatedProductPrice").each(function () {
+            const rawPrice = $(this).text().trim();
+            const formattedPrice = parseInt(rawPrice, 10).toLocaleString("vi-VN") + " đ";
+            $(this).text(formattedPrice);
+        });
+
     });
 
 </script>

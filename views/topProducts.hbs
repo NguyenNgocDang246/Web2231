@@ -82,7 +82,7 @@
                             <img src="{{this.image}}" class="card-img-top" alt="{{this.name}}">
                             <div class="card-body">
                                 <h5 class="card-title">{{this.name}}</h5>
-                                <p class="card-text text-muted">Price: {{this.price}} đ</p>
+                                <p class="card-text text-muted newProducts">{{this.price}} đ</p>
                                 <a href="/product/id={{this._id}}" class="btn btn-primary">View Product</a>
                             </div>
                         </div>
@@ -110,7 +110,7 @@
                             <img src="{{this.image}}" class="card-img-top" alt="{{this.name}}">
                             <div class="card-body">
                                 <h5 class="card-title">{{this.name}}</h5>
-                                <p class="card-text text-muted">Price: {{this.price}} đ</p>
+                                <p class="card-text text-muted bestSellingProducts">{{this.price}} đ</p>
                                 <a href="/product/id={{this._id}}" class="btn btn-primary">View Product</a>
                             </div>
                         </div>
@@ -178,6 +178,18 @@
                 bestsellingIndex--;
                 moveBestsellingSlide();
             }
+        });
+
+        $(".newProducts").each(function () {
+            const rawPrice = $(this).text().trim();
+            const formattedPrice = parseInt(rawPrice, 10).toLocaleString("vi-VN") + " đ";
+            $(this).text(formattedPrice);
+        });
+
+        $(".bestSellingProducts").each(function () {
+            const rawPrice = $(this).text().trim();
+            const formattedPrice = parseInt(rawPrice, 10).toLocaleString("vi-VN") + " đ";
+            $(this).text(formattedPrice);
         });
     });
 </script>

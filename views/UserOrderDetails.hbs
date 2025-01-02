@@ -13,15 +13,18 @@
     }
 
     .order-status.pending {
-        color: #ffc107; /* Yellow for pending */
+        color: #ffc107;
+        /* Yellow for pending */
     }
 
     .order-status.shipped {
-        color: #007bff; /* Blue for shipped */
+        color: #007bff;
+        /* Blue for shipped */
     }
 
     .order-status.delivered {
-        color: #28a745; /* Green for delivered */
+        color: #28a745;
+        /* Green for delivered */
     }
 </style>
 
@@ -31,7 +34,7 @@
 <section class="py-5">
     <div class="container">
         <!-- Tabs for Order Status -->
-        <ul class="nav nav-pills mb-3" id="orderTab" role="tablist">
+        <ul class="nav nav-underline mb-3" id="orderTab" role="tablist">
             <li class="nav-item" role="presentation">
                 <a class="nav-link {{#if (eq type 'pending')}}active{{/if}}" id="pending-tab" data-bs-toggle="pill"
                     href="#pending" role="tab" aria-controls="pending" aria-selected="true">Pending</a>
@@ -51,26 +54,29 @@
                 aria-labelledby="pending-tab">
                 {{#if pending_orders.length}}
                 {{#each pending_orders}}
-                <div class="card mb-3 shadow-sm order-card">
+                <div class="card mb-3 shadow-sm order-card border-start border-warning rounded">
                     <div class="card-body">
-                        <h5 class="card-title">Order #{{this._id}}</h5>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">Order #{{this._id}}</h5>
+                            <span class="badge bg-warning text-dark order-status">Pending</span>
+                        </div>
+                        <hr class="my-3">
                         <ul class="list-group list-group-flush mb-3">
                             {{#each this.items}}
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span><strong>{{this.name}}</strong></span>
-                                <span><strong>Quantity:</strong> {{this.quantity}}</span>
+                                <span class="fw-bold text-secondary">{{this.name}}</span>
+                                <span class="text-muted">x {{this.quantity}}</span>
                             </li>
                             {{/each}}
                         </ul>
-                        <p class="card-text"><strong>Total:</strong> <span
-                                class="text-primary">{{this.totalAmount}}đ</span></p>
-                        <p class="badge bg-warning text-dark order-status pending">Pending</p>
-                        {{!-- <div class="text-end">
-                            <button class="btn btn-danger btn-sm cancel-order" data-id="{{this._id}}">Cancel Order</button>
-                        </div> --}}
+                        <div class="d-flex justify-content-between align-items-center">
+                            <p class="card-text fw-bold">Total:</p>
+                            <p class="card-text text-primary h5 mb-0">{{this.totalAmount}} đ</p>
+                        </div>
                     </div>
                 </div>
                 {{/each}}
+
                 {{else}}
                 <p class="text-center text-muted">No pending orders available.</p>
                 {{/if}}
@@ -81,20 +87,25 @@
                 aria-labelledby="shipped-tab">
                 {{#if shipping_orders.length}}
                 {{#each shipping_orders}}
-                <div class="card mb-3 shadow-sm order-card">
+                <div class="card mb-3 shadow-sm order-card border-start border-warning rounded">
                     <div class="card-body">
-                        <h5 class="card-title">Order #{{this._id}}</h5>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">Order #{{this._id}}</h5>
+                            <span class="badge bg-warning text-dark order-status">Shipping</span>
+                        </div>
+                        <hr class="my-3">
                         <ul class="list-group list-group-flush mb-3">
                             {{#each this.items}}
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span><strong>{{this.name}}</strong></span>
-                                <span><strong>Quantity:</strong> {{this.quantity}}</span>
+                                <span class="fw-bold text-secondary">{{this.name}}</span>
+                                <span class="text-muted">x {{this.quantity}}</span>
                             </li>
                             {{/each}}
                         </ul>
-                        <p class="card-text"><strong>Total:</strong> <span
-                                class="text-primary">{{this.totalAmount}}đ</span></p>
-                        <p class="badge bg-primary text-light order-status shipped">Shipping</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <p class="card-text fw-bold">Total:</p>
+                            <p class="card-text text-primary h5 mb-0">{{this.totalAmount}} đ</p>
+                        </div>
                     </div>
                 </div>
                 {{/each}}
@@ -108,20 +119,25 @@
                 aria-labelledby="delivered-tab">
                 {{#if delivered_orders.length}}
                 {{#each delivered_orders}}
-                <div class="card mb-3 shadow-sm order-card">
+                <div class="card mb-3 shadow-sm order-card border-start border-warning rounded">
                     <div class="card-body">
-                        <h5 class="card-title">Order #{{this._id}}</h5>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">Order #{{this._id}}</h5>
+                            <span class="badge bg-warning text-dark order-status">Delivered</span>
+                        </div>
+                        <hr class="my-3">
                         <ul class="list-group list-group-flush mb-3">
                             {{#each this.items}}
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span><strong>{{this.name}}</strong></span>
-                                <span><strong>Quantity:</strong> {{this.quantity}}</span>
+                                <span class="fw-bold text-secondary">{{this.name}}</span>
+                                <span class="text-muted">x {{this.quantity}}</span>
                             </li>
                             {{/each}}
                         </ul>
-                        <p class="card-text"><strong>Total:</strong> <span
-                                class="text-primary">{{this.totalAmount}}đ</span></p>
-                        <p class="badge bg-success text-light order-status delivered">Delivered</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <p class="card-text fw-bold">Total:</p>
+                            <p class="card-text text-primary h5 mb-0">{{this.totalAmount}} đ</p>
+                        </div>
                     </div>
                 </div>
                 {{/each}}
