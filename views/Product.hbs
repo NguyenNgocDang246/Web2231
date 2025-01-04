@@ -6,21 +6,22 @@
         <div class="row">
             <!-- Sidebar for Filter -->
             <div class="col-md-3">
-                <h5>Filter Products</h5>
+                <h5 class="mb-4 text-center">Filter Products</h5>
                 <form id="filterForm">
                     <!-- Price Range -->
-                    <div class="mb-3">
-                        <label for="priceRange" class="form-label">Price Range</label>
+                    <div class="mb-4">
+                        <label for="priceRange" class="form-label ms-2">Price Range</label>
                         <div class="d-flex">
-                            <input type="number" class="form-control" id="minPrice" placeholder="Min Price" min="0">
+                            <input type="number" class="form-control" id="minPrice" placeholder="Min" min="0">
                             <span class="mx-2">-</span>
-                            <input type="number" class="form-control" id="maxPrice" placeholder="Max Price" min="0">
+                            <input type="number" class="form-control" id="maxPrice" placeholder="Max" min="0">
                         </div>
-                        <small>Enter a price range (e.g., 0 - 100)</small>
+                        <small class="form-text text-muted">Enter a price range (e.g., 0 - 100)</small>
                     </div>
+
                     <!-- Category Filter -->
-                    <div class="mb-3">
-                        <label for="categoryFilter" class="form-label">Category</label>
+                    <div class="mb-4">
+                        <label for="categoryFilter" class="form-label ms-2">Category</label>
                         <select class="form-select" id="categoryFilter">
                             <option value="">All Categories</option>
                             {{#each categories}}
@@ -28,25 +29,32 @@
                             {{/each}}
                         </select>
                     </div>
+
                     <!-- Sort By -->
-                    <div class="mb-3">
-                        <label for="sortBy" class="form-label">Sort By</label>
+                    <div class="mb-4">
+                        <label for="sortBy" class="form-label ms-2">Sort By</label>
                         <select class="form-select" id="sortBy">
                             <option value="price-low-to-high">Price: Low to High</option>
                             <option value="price-high-to-low">Price: High to Low</option>
                             <option value="newest">Newest</option>
                         </select>
                     </div>
+
                     <!-- Confirm Button -->
-                    <button type="submit" class="btn btn-primary">Confirm Filter</button>
+                    <button type="submit" class="btn btn-primary w-100">
+                        Confirm Filter
+                    </button>
                 </form>
             </div>
 
             <!-- Products Section -->
             <div class="col-md-9">
+                <h5 class="mb-4 text-center">List of items</h5>
                 <!-- Search Bar -->
                 <div class="mb-4">
-                    <input type="text" class="form-control" id="searchInput" placeholder="Search for items..." aria-label="Search for items">
+                    <label for="searchInput" class="form-label">Search bar</label>
+                    <input type="text" class="form-control" id="searchInput" placeholder="Input products name..."
+                        aria-label="Search for items">
                 </div>
 
                 <div class="row g-4" id="products">
@@ -100,6 +108,8 @@
 
                     // Render new product data
                     response.products.forEach(product => {
+                        const formattedPrice = product.price.toLocaleString("vi-VN") + " đ"; 
+
                         $('#products').append(`
                             <div class="col-md-4">
                                 <a href="/product/id=${product._id}">
@@ -174,3 +184,66 @@
         loadFilteredProducts();
     });
 </script>
+
+<style>
+    #filterForm {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #filterForm h5 {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .form-select,
+    .form-control {
+        border-radius: 0.375rem;
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-select:focus,
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+
+    small.form-text {
+        font-size: 0.875rem;
+    }
+
+    .form-select:hover {
+        border-color: #0056b3;
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    @media (max-width: 768px) {
+        #filterForm {
+            padding: 15px;
+        }
+
+        .btn-primary {
+            font-size: 0.9rem;
+        }
+    }
+
+    h5,
+    label {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 600;
+    }
+</style>
