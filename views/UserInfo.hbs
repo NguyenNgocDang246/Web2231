@@ -21,6 +21,7 @@
     .profile-header h2 {
         font-size: 2rem;
         color: #333;
+        margin-right: 0.5rem;
     }
 
     .profile-header p {
@@ -36,7 +37,7 @@
         border-radius: 8px;
         box-shadow: none;
         border: 1px solid #ddd;
-        padding: 10px;
+        padding: 12.7px;
     }
 
     .form-control:focus {
@@ -44,33 +45,14 @@
         box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
     }
 
-    .profile-btn {
+    .btn {
         width: 100%;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        padding: 12px;
+        padding: 8px;
         border-radius: 8px;
         font-size: 1rem;
         cursor: pointer;
     }
 
-    .profile-btn:hover {
-        background-color: #0056b3;
-    }
-
-    .profile-info {
-        margin-bottom: 20px;
-    }
-
-    .change-password-btn {
-        background-color: #ffc107;
-        color: #fff;
-    }
-
-    .change-password-btn:hover {
-        background-color: #e0a800;
-    }
 </style>
 
 {{> Nav user=user}}
@@ -78,37 +60,39 @@
 <!-- User Profile -->
 <div class="container profile-container">
     <div class="profile-header">
-        <h2>User Profile</h2>
-        <p>Edit your personal information below</p>
+        <h2 class="fw-medium">User Profile
+            <i class="fas fa-user-circle me-2"></i>
+        </h2>
+        <p class="fw-lighter fst-italic">Edit your personal information below</p>
     </div>
 
     <form id="profileForm">
         <!-- Full Name and Email -->
         <div class="row profile-info">
             <div class="col-md-6">
-                <label for="name">Full Name</label>
+                <label for="name" class="ms-2">Full Name</label>
                 <input type="text" class="form-control" id="name" value="{{user.name}}">
             </div>
             <div class="col-md-6">
-                <label for="email">Email Address</label>
+                <label for="email" class="ms-2">Email Address</label>
                 <input type="email" class="form-control" id="email" value="{{user.email}}">
             </div>
         </div>
 
         <!-- Phone Number and Date of Birth -->
         <div class="row profile-info">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label for="phone">Phone Number</label>
                 <input type="text" class="form-control" id="phone" value="{{user.phone}}">
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label for="dob">Date of Birth</label>
                 <input type="date" class="form-control" id="dob" value="{{user.dob}}">
             </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <label for="role">Role</label>
                 <div class="d-flex justify-content-between align-items-center border p-2 rounded">
-                    <div>
+                    <div class="text-nowrap me-4">
                         {{#if (eq user.role 'vip_user')}}VIP User
                         {{else}}
                             {{#if (eq user.role 'normal_user')}}Normal User
@@ -120,7 +104,7 @@
                     </div>
                     {{#if (or (eq user.role 'vip_user') (eq user.role 'admin'))}}
                     {{else}}
-                    <button type="button" id="upgradeVipBtn" class="btn btn-outline-warning btn-sm">
+                    <button type="button" id="upgradeVipBtn" class="btn btn-outline-warning btn-sm py-1">
                         <i class="fas fa-star"></i> Upgrade VIP
                     </button>
                     {{/if}}
@@ -130,8 +114,8 @@
 
         <!-- Save and Change Password Buttons -->
         <div class="mt-4">
-            <button type="submit" class="profile-btn">Save Changes</button>
-            <button type="button" class="profile-btn change-password-btn mt-3" onclick="openChangePasswordModal()">
+            <button type="submit" class="btn btn-outline-success">Save Changes</button>
+            <button type="button" class="btn btn-outline-warning change-password-btn mt-3" onclick="openChangePasswordModal()">
                 Change Password
             </button>
         </div>
@@ -144,24 +128,24 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
+                <h5 class="modal-title fw-bold  " id="changePasswordModalLabel">Change Password</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="changePasswordForm">
                     <div class="mb-3">
-                        <label for="currentPassword" class="form-label">Current Password</label>
+                        <label for="currentPassword" class="form-label ms-1">Current Password</label>
                         <input type="password" class="form-control" id="currentPassword" required>
                     </div>
                     <div class="mb-3">
-                        <label for="newPassword" class="form-label">New Password</label>
+                        <label for="newPassword" class="form-label ms-1">New Password</label>
                         <input type="password" class="form-control" id="newPassword" required>
                     </div>
                     <div class="mb-3">
-                        <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                        <label for="confirmPassword" class="form-label ms-1">Confirm New Password</label>
                         <input type="password" class="form-control" id="confirmPassword" required>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Change Password</button>
+                    <button type="submit" class="btn btn-outline-danger mt-3">Change Password</button>
                 </form>
             </div>
         </div>
