@@ -69,6 +69,9 @@
 
 <!-- Script to handle Filter, Search, and Pagination -->
 <script>
+    function fmCurrency(value) {
+        return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+    }
     $(document).ready(function () {
         // Function to load products based on filter, search, and pagination
         function loadFilteredProducts(page = 1) {
@@ -101,10 +104,16 @@
                             <div class="col-md-4">
                                 <a href="/product/id=${product._id}">
                                     <div class="card">
-                                        <img src="${product.image[0]}" class="card-img-top" alt="${product.name}">
+                                        <div class="overflow-hidden" style="height: 200px;">
+                                            <img src="${product.image[0]}" alt="${product.name}"
+                                                class="card-img-top h-100 w-100 object-fit-cover"
+                                            >
+                                        </div>
                                         <div class="card-body">
-                                            <h5 class="card-title">${product.name}</h5>
-                                            <p class="card-text">${product.price} đ</p>
+                                            <h5 class="card-title" style="height: 2.5em;">
+                                                ${product.name}
+                                            </h5>
+                                            <p class="card-text">${fmCurrency(product.price)}</p>
                                         </div>
                                     </div>
                                 </a>

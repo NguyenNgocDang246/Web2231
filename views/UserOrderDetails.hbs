@@ -45,7 +45,7 @@
                     href="#delivered" role="tab" aria-controls="delivered" aria-selected="false">Delivered</a>
             </li>
         </ul>
-        <div class="tab-content" id="orderTabContent">
+        <div class="tab-content overflow-auto" style="height: 51.7vh;" id="orderTabContent">
             <!-- Pending Orders -->
             <div class="tab-pane fade {{#if (eq type 'pending')}}show active{{/if}}" id="pending" role="tabpanel"
                 aria-labelledby="pending-tab">
@@ -63,7 +63,7 @@
                             {{/each}}
                         </ul>
                         <p class="card-text"><strong>Total:</strong> <span
-                                class="text-primary">{{this.totalAmount}}đ</span></p>
+                                class="text-primary">{{fmCurrency this.totalAmount}}</span></p>
                         <p class="badge bg-warning text-dark order-status pending">Pending</p>
                         {{!-- <div class="text-end">
                             <button class="btn btn-danger btn-sm cancel-order" data-id="{{this._id}}">Cancel Order</button>
@@ -93,7 +93,7 @@
                             {{/each}}
                         </ul>
                         <p class="card-text"><strong>Total:</strong> <span
-                                class="text-primary">{{this.totalAmount}}đ</span></p>
+                                class="text-primary">{{fmCurrency this.totalAmount}}</span></p>
                         <p class="badge bg-primary text-light order-status shipped">Shipping</p>
                     </div>
                 </div>
@@ -120,7 +120,7 @@
                             {{/each}}
                         </ul>
                         <p class="card-text"><strong>Total:</strong> <span
-                                class="text-primary">{{this.totalAmount}}đ</span></p>
+                                class="text-primary">{{fmCurrency this.totalAmount}}</span></p>
                         <p class="badge bg-success text-light order-status delivered">Delivered</p>
                     </div>
                 </div>

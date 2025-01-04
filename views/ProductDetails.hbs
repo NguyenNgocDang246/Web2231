@@ -28,12 +28,12 @@
     <div class="container">
         <div class="row g-4">
             <!-- Product Image -->
-            <div class="col-md-6">
-                <img src="{{index product.image 0}}" alt="Product Image" class="img-fluid rounded">
+            <div class="col-12 col-md-6 overflow-hidden" style="height: 500px;">
+                <img src="{{index product.image 0}}" alt="Product Image" class="img-fluid rounded object-fit-contain">
             </div>
 
             <!-- Product Info + Specifications -->
-            <div class="col-md-6">
+            <div class="col-12 col-md-6">
                 <div class="card-body">
                     <h2 id="productName">{{product.name}}</h2>
                     <p class="text-muted" id="productCategory">Category:
@@ -44,7 +44,7 @@
                     <p id="productDescription">
                         {{product.description}}
                     </p>
-                    <h4 class="fw-bold"><span id="productPrice">{{product.price}} đ</span></h4>
+                    <h4 class="fw-bold"><span id="productPrice">{{fmCurrency product.price}}</span></h4>
 
                     <div class="d-flex align-items-center justify-content-between">
                         <!-- Add to Cart -->
@@ -90,10 +90,12 @@
                 {{#each relatedProducts}}
                 <div class="col">
                     <div class="card h-100" id="relatedProduct{{this._id}}">
-                        <img src="{{this.image}}" class="card-img-top" alt="{{this.name}}">
+                        <div class="overflow-hidden" style="height: 200px;">
+                            <img src="{{this.image}}" class="card-img-top h-100 w-100 object-fit-cover" alt="{{this.name}}">
+                        </div>
                         <div class="card-body">
                             <h5 class="card-title">{{this.name}}</h5>
-                            <p class="card-text text-muted">Price: {{this.price}} đ</p>
+                            <p class="card-text text-muted">Price: {{fmCurrency this.price}} </p>
                             <a href="/product/id={{this._id}}" class="btn btn-primary">View Product</a>
                         </div>
                     </div>
