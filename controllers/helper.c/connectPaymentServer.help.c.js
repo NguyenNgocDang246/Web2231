@@ -6,7 +6,8 @@ const httpsAgent = new https.Agent({
 });
 
 // const link = 'https://web2231-admin.onrender.com/payment';
-const link = 'https://34.126.99.70/payment';
+// const link = 'https://34.126.99.70/payment';
+const link = 'https://ledressingreve.zapto.org/payment';
 
 module.exports = {
     getAccessToken: async (data) => {
