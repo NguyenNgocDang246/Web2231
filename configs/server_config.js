@@ -37,7 +37,7 @@ module.exports = (app) => {
     passport.use(new GoogleStrategy({
         clientID: process.env.GG_CLIENT_ID,
         clientSecret: process.env.GG_CLIENT_SECRET,
-        callbackURL: "/auth/google/callback",
+        callbackURL: "https://doanmonweb.myftp.biz/auth/google/callback",
       },
       async (accessToken, refreshToken, profile, done) => {
         let user = await userModel.findOne({email: profile.emails[0].value});
