@@ -2,10 +2,11 @@ const axios = require('axios');
 const https = require('https');
 
 const httpsAgent = new https.Agent({
-    rejectUnauthorized: true, 
+    rejectUnauthorized: false, 
 });
 
-const link = 'https://web2231-admin.onrender.com/payment';
+// const link = 'https://web2231-admin.onrender.com/payment';
+const link = 'https://34.126.99.70/payment';
 
 module.exports = {
     getAccessToken: async (data) => {
