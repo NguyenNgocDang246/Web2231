@@ -84,7 +84,8 @@ module.exports = ({
         const token = req.body.token;
         const order = await orderModel.findOne({_id: req.body.orderID}); // để lấy order.totalAmount
         // gửi token qua hệ thống thanh toán để xác nhận thanh toán
-        const message = await connectPayment.confirmPayment(token, {amount: order.totalAmount});
+        const message = await connectPayment.confirmPayment(token, 
+            {amount: order.totalAmount, description: 'Payment for order ' + req.body.orderID});
         // nhận kết quả
         const result = message === 'success';
         if (result) {
