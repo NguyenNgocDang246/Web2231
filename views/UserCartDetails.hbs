@@ -33,7 +33,7 @@
                                 <tr data-id="{{this._id}}">
                                     <td>{{this.name}}</td>
                                     <td>{{this.quantity}}</td>
-                                    <td class="cartItemPrice">{{this.price}}</td>
+                                    <td class="cartItemPrice">{{fmCurrency this.price}}</td>
                                     <td class="checkbox-center"><input type="checkbox" class="product-checkbox"
                                             data-id="{{this._id}}" data-price="{{this.price}}"></td>
                                     <td class="checkbox-center"><button type="button"
@@ -125,9 +125,9 @@
             });
 
             // Cập nhật tổng giá trị
-            //const formattedPrice = parseInt(totalPrice, 10).toLocaleString("vi-VN") + " đ";
+            const totalPriceFmt = totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
 
-            $('#totalPrice').text(totalPrice);
+            $('#totalPrice').text(totalPriceFmt);
             updateConfirmButtonState();
         }
 
