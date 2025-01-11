@@ -47,7 +47,8 @@
                                 {{/if}}
                             </tbody>
                         </table>
-                        <h4 class="fw-bold">Total: <span id="totalPrice"></span></h4>
+                        <h4 class="fw-bold">Total: <span id="totalPriceFmt"></span></h4>
+                        <h4 class="fw-bold visually-hidden"><span id="totalPrice"></span></h4>
                     </div>
                 </div>
             </div>
@@ -126,8 +127,9 @@
 
             // Cập nhật tổng giá trị
             const totalPriceFmt = totalPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+            $('#totalPriceFmt').text(totalPriceFmt);
 
-            $('#totalPrice').text(totalPriceFmt);
+            $('#totalPrice').text(totalPrice);
             updateConfirmButtonState();
         }
 
