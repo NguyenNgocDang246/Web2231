@@ -24,7 +24,7 @@ module.exports = ({
                 if (category) {
                     categoryNames.push(category.name);
 
-                    const products = await productModel.find({ category_id: category._id });
+                    const products = await productModel.find({ $or: [{ category_id: category._id }, { category_id: category._id.toString() }] }, null, null, { createdAt: -1 }, { category_id: category._id });
                     for (const relatedProduct of products) {
                         if (relatedProduct._id.toString() !== product._id.toString()) {
                             relatedProducts.push(relatedProduct);
@@ -67,7 +67,8 @@ module.exports = ({
         if (maxPrice) query.price = { ...query.price, $lte: +maxPrice };
         if (category) {
             const categoryIDs = await categoryModel.find({ name: category });
-            query.category_id = categoryIDs[0]._id;
+            query.$or = [{ category_id: categoryIDs[0]._id }, { category_id: categoryIDs[0]._id.toString() }];
+            //query.category_id = categoryIDs[0]._id;
         }
         if (searchQuery) query.name = { $regex: searchQuery, $options: 'i' };
 
