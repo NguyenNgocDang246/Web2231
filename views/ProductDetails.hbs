@@ -108,7 +108,7 @@
                         <p id="productDescription" class="text-secondary mb-4">{{product.description}}</p>
 
                         <!-- Product Price -->
-                        <h4 class="fw-bold"><span id="productPrice"></span></h4>
+                        <h4 class="fw-bold"><span id="productPrice"> {{fmCurrency product.price}}</span></h4>
 
                         <!-- Add to Cart & Share -->
                         <div class="d-flex align-items-center mt-4">
@@ -317,18 +317,6 @@
             } else {
                 alert('Please fill out both fields.');
             }
-        });
-
-        const rawPrice = "{{product.price}}";
-        const formattedPrice = parseInt(rawPrice, 10).toLocaleString("vi-VN") + " đ";
-
-        $("#productPrice").text(formattedPrice);
-
-
-        $(".relatedProductPrice").each(function () {
-            const rawPrice = $(this).text().trim();
-            const formattedPrice = parseInt(rawPrice, 10).toLocaleString("vi-VN") + " đ";
-            $(this).text(formattedPrice);
         });
 
     });

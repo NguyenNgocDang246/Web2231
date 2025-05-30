@@ -108,7 +108,7 @@
 
                     // Render new product data
                     response.products.forEach(product => {
-                        const formattedPrice = product.price.toLocaleString("vi-VN") + " đ"; 
+                        const formattedPrice = product.price.toLocaleString("vi-VN") + " đ";
 
                         $('#products').append(`
                             <div class="col-md-4">
@@ -169,8 +169,12 @@
         });
 
         // Search bar input event
+        let debounceTimer;
         $('#searchInput').on('input', function () {
-            loadFilteredProducts();
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                loadFilteredProducts();
+            }, 300);
         });
 
         // Pagination click event

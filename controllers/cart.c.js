@@ -13,7 +13,8 @@ module.exports = ({
 
                 if (existingProductIndex !== -1) {
                     // Nếu sản phẩm đã tồn tại, cập nhật quantity
-                    req.session.user.cart[existingProductIndex].quantity += quantity;
+                    req.session.user.cart[existingProductIndex].quantity =
+                    parseInt(req.session.user.cart[existingProductIndex].quantity, 10) + +quantity;
                 } else {
                     // Nếu chưa tồn tại, thêm mới sản phẩm vào giỏ hàng
                     req.session.user.cart.push({
